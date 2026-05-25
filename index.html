@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Brazil Sept–Oct 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -23,8 +25,6 @@
   --border:#1e2b22;
 }
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
-
-/* Grain overlay */
 body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:.03;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:9999}
 
 .hero{padding:3rem 2rem 2rem;text-align:center;position:relative}
@@ -36,6 +36,38 @@ h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);font-we
 .stat{text-align:center}
 .stat-val{font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:500;color:var(--green)}
 .stat-label{font-size:.7rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim);margin-top:.15rem}
+
+/* MAP */
+.map-section{max-width:760px;margin:0 auto;padding:0 1.5rem 1.5rem}
+.map-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin-bottom:.75rem;color:var(--text);text-align:center}
+.map-outer{border-radius:16px;overflow:hidden;border:1px solid var(--border)}
+#trip-map{height:480px;width:100%;background:var(--bg)}
+.map-legend{display:flex;justify-content:center;gap:1rem;margin-top:.6rem;flex-wrap:wrap}
+.map-legend-item{display:flex;align-items:center;gap:.3rem;font-size:.65rem;color:var(--text-dim)}
+.map-legend-dot{width:8px;height:8px;border-radius:50%}
+
+/* Leaflet popup overrides */
+.leaflet-popup-content-wrapper{background:var(--card)!important;color:var(--text)!important;border:1px solid var(--border)!important;border-radius:10px!important;box-shadow:0 8px 32px rgba(0,0,0,.5)!important}
+.leaflet-popup-tip{background:var(--card)!important;border:none!important}
+.leaflet-popup-content{font-family:'DM Sans',sans-serif!important;font-size:.8rem!important;line-height:1.5!important;margin:10px 14px!important}
+.popup-city{color:var(--green);font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;margin-bottom:2px}
+.popup-dates{color:var(--text-dim);font-family:'JetBrains Mono',monospace;font-size:.65rem}
+.popup-nights{display:inline-block;background:var(--green-dim);color:var(--green);font-family:'JetBrains Mono',monospace;font-size:.6rem;padding:1px 6px;border-radius:4px;margin-left:4px}
+.popup-highlights{margin-top:6px;color:#b0c4b0;font-size:.75rem;line-height:1.45}
+.popup-highlights span{display:block;padding:1px 0}
+.popup-highlights span::before{content:'• ';color:var(--text-dim)}
+.leaflet-container{background:var(--bg)!important;font-family:'DM Sans',sans-serif!important}
+.leaflet-control-zoom a{background:var(--card)!important;color:var(--text)!important;border-color:var(--border)!important}
+.leaflet-control-zoom a:hover{background:var(--card-hover)!important}
+.leaflet-control-attribution{background:rgba(10,15,13,.7)!important;color:var(--text-dim)!important;font-size:9px!important}
+.leaflet-control-attribution a{color:var(--text-dim)!important}
+
+/* Custom pulse marker */
+.custom-marker{position:relative}
+.marker-dot{width:14px;height:14px;border-radius:50%;border:2.5px solid var(--bg);position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.marker-pulse{width:28px;height:28px;border-radius:50%;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);opacity:.25;animation:pulse 2.5s ease-out infinite}
+.marker-label{position:absolute;left:18px;top:50%;transform:translateY(-50%);white-space:nowrap;font-family:'Playfair Display',serif;font-size:12px;font-weight:700;text-shadow:0 1px 4px rgba(0,0,0,.8),0 0 12px rgba(0,0,0,.6)}
+@keyframes pulse{0%{transform:translate(-50%,-50%) scale(1);opacity:.25}100%{transform:translate(-50%,-50%) scale(2.5);opacity:0}}
 
 .filter-bar{display:flex;justify-content:center;gap:.5rem;padding:.5rem 1.5rem 1rem;flex-wrap:wrap}
 .filter-btn{padding:.4rem .9rem;border-radius:99px;border:1px solid var(--border);background:transparent;color:var(--text-dim);font-size:.75rem;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
@@ -51,7 +83,6 @@ h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);font-we
 
 .day-card{margin-left:56px;margin-bottom:.6rem;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;transition:all .25s;cursor:default;position:relative;animation:fadeUp .4s ease both}
 .day-card:hover{background:var(--card-hover);border-color:var(--green-dim);transform:translateX(3px)}
-
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
 .day-top{display:flex;align-items:center;gap:.6rem;margin-bottom:.5rem}
@@ -73,7 +104,6 @@ h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);font-we
 
 .note{margin-top:.6rem;padding:.5rem .7rem;background:var(--yellow-dim);border-radius:8px;font-size:.75rem;color:var(--yellow);line-height:1.4}
 .note::before{content:'💡 '}
-
 .question{margin-top:.6rem;padding:.5rem .7rem;background:#ff6b9d18;border-radius:8px;font-size:.75rem;color:var(--pink);line-height:1.4}
 .question::before{content:'❓ '}
 
@@ -88,6 +118,7 @@ h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);font-we
   .day-card{margin-left:42px}
   .stats{gap:1.2rem}
   .city-dates{display:none}
+  #trip-map{height:380px}
 }
 </style>
 </head>
@@ -101,6 +132,21 @@ h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);font-we
     <div class="stat"><div class="stat-val">5</div><div class="stat-label">Cities</div></div>
     <div class="stat"><div class="stat-val">18</div><div class="stat-label">Nights</div></div>
     <div class="stat"><div class="stat-val">~8,000 km</div><div class="stat-label">Covered</div></div>
+  </div>
+</div>
+
+<!-- LEAFLET MAP -->
+<div class="map-section">
+  <div class="map-title">🗺️ Route Overview</div>
+  <div class="map-outer">
+    <div id="trip-map"></div>
+  </div>
+  <div class="map-legend">
+    <div class="map-legend-item"><div class="map-legend-dot" style="background:#00d47b"></div> Rio de Janeiro (4n)</div>
+    <div class="map-legend-item"><div class="map-legend-dot" style="background:#4ecdc4"></div> Ilha Grande (3n)</div>
+    <div class="map-legend-item"><div class="map-legend-dot" style="background:#ffd43b"></div> São Paulo (5n)</div>
+    <div class="map-legend-item"><div class="map-legend-dot" style="background:#ff8c42"></div> Iguaçu Falls (2n)</div>
+    <div class="map-legend-item"><div class="map-legend-dot" style="background:#ff6b9d"></div> Manaus (3n)</div>
   </div>
 </div>
 
@@ -128,25 +174,17 @@ h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);font-we
   <div class="city-header" data-city="rio"><div class="city-dot"></div><div class="city-name">Rio de Janeiro</div><div class="city-dates">Sept 17–20</div></div>
 
   <div class="day-card" data-city="rio" style="animation-delay:.05s">
-    <div class="day-top">
-      <span class="day-badge">Sept 17 </span>
-      <span class="day-type">Arrival</span>
-      <span class="day-dow">Wednesday</span>
-    </div>
+    <div class="day-top"><span class="day-badge">Sept 17</span><span class="day-type">Arrival</span><span class="day-dow">Wednesday</span></div>
     <div class="stay"><span class="stay-icon">🏠</span> Airbnb — Check in</div>
     <div class="activities">
       <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">Evening walk along Copacabana promenade, settle in</span></div>
       <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">Grab açaí or a casual dinner nearby</span></div>
     </div>
-    <div class="note">Arrive early enough? The sunset from Arpoador Rock (between Ipanema & Copacabana) is legendary for a first-night vibe.</div>
+    <div class="note">Arrive early enough? The sunset from Arpoador Rock (between Ipanema &amp; Copacabana) is legendary for a first-night vibe.</div>
   </div>
 
   <div class="day-card" data-city="rio" style="animation-delay:.1s">
-    <div class="day-top">
-      <span class="day-badge">Sept 18</span>
-      <span class="day-type">Explore</span>
-      <span class="day-dow">Thursday</span>
-    </div>
+    <div class="day-top"><span class="day-badge">Sept 18</span><span class="day-type">Explore</span><span class="day-dow">Thursday</span></div>
     <div class="stay"><span class="stay-icon">🏠</span> Airbnb</div>
     <div class="activities">
       <div class="activity"><div class="activity-dot"></div><span class="activity-text">🗻 Christ the Redeemer — go early (8am) to beat crowds</span></div>
@@ -158,11 +196,7 @@ h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);font-we
   </div>
 
   <div class="day-card" data-city="rio" style="animation-delay:.15s">
-    <div class="day-top">
-      <span class="day-badge">Sept 19</span>
-      <span class="day-type">Full Day</span>
-      <span class="day-dow">Friday</span>
-    </div>
+    <div class="day-top"><span class="day-badge">Sept 19</span><span class="day-type">Full Day</span><span class="day-dow">Friday</span></div>
     <div class="stay"><span class="stay-icon">🏠</span> Airbnb</div>
     <div class="activities">
       <div class="activity"><div class="activity-dot"></div><span class="activity-text">⚽ Football Match — Maracanã</span></div>
@@ -171,16 +205,12 @@ h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);font-we
       <div class="activity"><div class="activity-dot"></div><span class="activity-text">🔬 Museu do Amanhã</span></div>
       <div class="activity"><div class="activity-dot"></div><span class="activity-text">🥩 Steakhouse dinner</span></div>
     </div>
-    <div class="note">This is a packed day. Suggested order: beach morning → Museu do Amanhã (nearby in Praça Mauá) → food tour afternoon → Maracanã evening. Check Flamengo/Fluminense fixtures.</div>
-    <div class="question">Steakhouse: Fogo de Chão (classic rodízio), Porcão (Flamengo waterfront views), or CT Boucherie (upscale, Leblon)? Budget vs. vibe?</div>
+    <div class="note">Suggested order: beach morning → Museu do Amanhã → food tour afternoon → Maracanã evening. Check Flamengo/Fluminense fixtures.</div>
+    <div class="question">Steakhouse: Fogo de Chão (classic rodízio), Porcão (waterfront views), or CT Boucherie (upscale, Leblon)?</div>
   </div>
 
   <div class="day-card" data-city="rio" style="animation-delay:.2s">
-    <div class="day-top">
-      <span class="day-badge">Sept 20</span>
-      <span class="day-type">Explore</span>
-      <span class="day-dow">Saturday</span>
-    </div>
+    <div class="day-top"><span class="day-badge">Sept 20</span><span class="day-type">Explore</span><span class="day-dow">Saturday</span></div>
     <div class="stay"><span class="stay-icon">🏠</span> Airbnb</div>
     <div class="activities">
       <div class="activity"><div class="activity-dot"></div><span class="activity-text">🏘️ Santa Teresa neighbourhood — cobblestone streets, art studios</span></div>
@@ -188,244 +218,233 @@ h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);font-we
       <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">Parque das Ruínas — panoramic views, free entry</span></div>
       <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">Sugarloaf Cable Car (sunset time slot)</span></div>
     </div>
-    <div class="note">Santa Teresa is best as a morning/lunch thing. Combine with Sugarloaf sunset — one of the best views in Rio. Last cable car up ~7pm.</div>
-    <div class="question">This is your last full Rio evening before Ilha Grande. Want to add nightlife in Lapa (samba clubs, live forró)?</div>
+    <div class="note">Santa Teresa morning/lunch → Sugarloaf sunset. Last cable car up ~7pm.</div>
+    <div class="question">Last full Rio evening before Ilha Grande. Add nightlife in Lapa (samba clubs, live forró)?</div>
   </div>
 
   <!-- ILHA GRANDE -->
-  <div class="city-header" data-city="ilha"><div class="city-dot"></div><div class="city-name">Ilha Grande</div><div class="city-dates">Sept 21–22</div></div>
+  <div class="city-header" data-city="ilha"><div class="city-dot"></div><div class="city-name">Ilha Grande</div><div class="city-dates">Sept 21–23</div></div>
 
   <div class="day-card" data-city="ilha" style="animation-delay:.05s">
-    <div class="day-top">
-      <span class="day-badge travel">Sept 21</span>
-      <span class="day-type">Travel + Explore</span>
-      <span class="day-dow">Sunday</span>
-    </div>
+    <div class="day-top"><span class="day-badge travel">Sept 21</span><span class="day-type">Travel + Settle In</span><span class="day-dow">Sunday</span></div>
     <div class="stay"><span class="stay-icon">🏠</span> Pousada on Ilha Grande (book ahead)</div>
     <div class="activities">
-      <div class="activity"><div class="activity-dot"></div><span class="activity-text">🚌 Rio → Conceição de Jacareí (~2.5hr bus) → ⛴️ boat to Abraão</span></div>
-      <div class="activity"><div class="activity-dot"></div><span class="activity-text">🥾 Lopes Mendes Beach Hike (T5 trail, ~2hr each way)</span></div>
+      <div class="activity"><div class="activity-dot"></div><span class="activity-text">🚌 Rio → Conceição de Jacareí (~2.5hr) → ⛴️ boat to Abraão</span></div>
+      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">Explore Abraão village, swim at the nearby beaches</span></div>
+      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">Evening seafood dinner on the waterfront</span></div>
     </div>
-    <div class="note">Leave Rio by 7am to catch a morning boat. Alternatively book an Easy Transfer shuttle (door-to-door, ~R$150). Lopes Mendes is often ranked Brazil's best beach — worth the trek.</div>
-    <div class="question">Hike to Lopes Mendes is doable on arrival day only if you catch the early boat (~8:30am). Otherwise push the hike to the 22nd?</div>
+    <div class="note">Leave Rio by 7am for the morning boat. Easy Transfer shuttle is ~R$150 door-to-door. Keep arrival day relaxed — save the big hike for tomorrow.</div>
   </div>
 
   <div class="day-card" data-city="ilha" style="animation-delay:.1s">
-    <div class="day-top">
-      <span class="day-badge chill">Sept 22</span>
-      <span class="day-type">Island Day</span>
-      <span class="day-dow">Monday</span>
-    </div>
+    <div class="day-top"><span class="day-badge">Sept 22</span><span class="day-type">Hike Day</span><span class="day-dow">Monday</span></div>
     <div class="stay"><span class="stay-icon">🏠</span> Pousada</div>
     <div class="activities">
-      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">Boat tour around the island — Lagoa Azul, snorkelling stops</span></div>
-      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">Alternatively: hike to Cachoeira da Feiticeira waterfall (1hr)</span></div>
-      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">Chill evening in Abraão — fresh seafood, caipirinha on the beach</span></div>
+      <div class="activity"><div class="activity-dot"></div><span class="activity-text">🥾 Lopes Mendes Beach Hike (T5 trail, ~2hr each way)</span></div>
+      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">Spend the afternoon on Lopes Mendes — often ranked Brazil's best beach</span></div>
+      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">Caipirinhas in Abraão in the evening</span></div>
     </div>
-    <div class="note">No cars on Ilha Grande — it's all trails, boats, and beaches. Total digital detox. Phone signal is spotty.</div>
+    <div class="note">Start early (8am) to beat the heat on the trail. Bring water, sunscreen, and snacks — nothing at Lopes Mendes.</div>
+  </div>
+
+  <div class="day-card" data-city="ilha" style="animation-delay:.15s">
+    <div class="day-top"><span class="day-badge chill">Sept 23</span><span class="day-type">Island Day</span><span class="day-dow">Tuesday</span></div>
+    <div class="stay"><span class="stay-icon">🏠</span> Pousada</div>
+    <div class="activities">
+      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🚤 Boat tour — Lagoa Azul, snorkelling stops</span></div>
+      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">Cachoeira da Feiticeira waterfall hike (1hr)</span></div>
+      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">Last evening in Abraão — fresh seafood, sunset on the beach</span></div>
+    </div>
+    <div class="note">No cars on Ilha Grande — all trails, boats, and beaches. Total digital detox. Phone signal is spotty.</div>
   </div>
 
   <!-- SÃO PAULO 1 -->
-  <div class="city-header" data-city="sp"><div class="city-dot"></div><div class="city-name">São Paulo</div><div class="city-dates">Sept 23–25</div></div>
+  <div class="city-header" data-city="sp"><div class="city-dot"></div><div class="city-name">São Paulo</div><div class="city-dates">Sept 24–25</div></div>
 
   <div class="day-card" data-city="sp" style="animation-delay:.05s">
-    <div class="day-top">
-      <span class="day-badge travel">Sept 23</span>
-      <span class="day-type">Travel + Explore</span>
-      <span class="day-dow">Tuesday</span>
-    </div>
+    <div class="day-top"><span class="day-badge travel">Sept 24</span><span class="day-type">Travel + Explore</span><span class="day-dow">Wednesday</span></div>
     <div class="stay"><span class="stay-icon">🏠</span> Accommodation TBD</div>
     <div class="activities">
-      <div class="activity"><div class="activity-dot"></div><span class="activity-text">⛴️🚌 Ilha Grande → Rio bus terminal → domestic flight or 5.5hr bus to SP</span></div>
-      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">Evening: Avenida Paulista — walk the closed-to-traffic stretch, street art, MASP building lit up</span></div>
+      <div class="activity"><div class="activity-dot"></div><span class="activity-text">⛴️🚌 Ilha Grande → Rio → flight or 5.5hr bus to SP</span></div>
+      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">Evening: Avenida Paulista — MASP building lit up, street art</span></div>
     </div>
-    <div class="question">How are you getting to SP? Flight from Santos Dumont (~1hr, cheap on GOL/LATAM) or bus (~6hr)? This affects how much of the day you have.</div>
+    <div class="question">Flight from Santos Dumont (~1hr) or bus (~6hr)?</div>
   </div>
 
   <div class="day-card" data-city="sp" style="animation-delay:.1s">
-    <div class="day-top">
-      <span class="day-badge">Sept 24</span>
-      <span class="day-type">Culture + Food</span>
-      <span class="day-dow">Wednesday</span>
-    </div>
+    <div class="day-top"><span class="day-badge">Sept 25</span><span class="day-type">Culture + Food + Nightlife</span><span class="day-dow">Thursday</span></div>
     <div class="stay"><span class="stay-icon">🏠</span> Accommodation TBD</div>
     <div class="activities">
-      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🖼️ Pinacoteca — Brazil's oldest art museum, stunning building</span></div>
-      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🏛️ Mercado Municipal — try the famous mortadella sandwich & pastéis</span></div>
-      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🎸 Vila Madalena — street art (Beco do Batman), vinyl shops, craft beer bars</span></div>
-      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🍜 Liberdade (Japantown) — largest Japanese community outside Japan</span></div>
+      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🏛️ Mercado Municipal — mortadella sandwich &amp; pastéis</span></div>
+      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🎸 Vila Madalena — Beco do Batman street art, vinyl shops, craft beer</span></div>
+      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🍜 Liberdade (Japantown) for lunch or dinner</span></div>
+      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🎶 D-Edge or Clash Club — D&amp;B / techno night</span></div>
     </div>
-    <div class="note">SP is a food city above all. Japanese, Italian (Bixiga neighbourhood), Lebanese, and Brazilian. Plan meals deliberately.</div>
-  </div>
-
-  <div class="day-card" data-city="sp" style="animation-delay:.15s">
-    <div class="day-top">
-      <span class="day-badge">Sept 25</span>
-      <span class="day-type">Full Day</span>
-      <span class="day-dow">Thursday</span>
-    </div>
-    <div class="stay"><span class="stay-icon">🏠</span> Accommodation TBD</div>
-    <div class="activities">
-      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">☕ Specialty coffee — SP has world-class cafés (Coffee Lab, Isso é Café)</span></div>
-      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🏙️ Edifício Itália or Terraço Itália — rooftop views over the skyline</span></div>
-      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🎶 Live music — check for D&B / techno nights (D-Edge, Clash Club are legendary)</span></div>
-    </div>
-    <div class="note">D-Edge is one of the best electronic music clubs in South America. Techno and D&B nights are common on weeknights. Check their programme for this Thursday.</div>
+    <div class="note">D-Edge is one of the best electronic clubs in South America. Vila Madalena afternoon → Liberdade dinner → D-Edge late. SP is a food city — plan meals deliberately.</div>
   </div>
 
   <!-- IGUAÇU -->
   <div class="city-header" data-city="iguazu"><div class="city-dot"></div><div class="city-name">Iguaçu Falls</div><div class="city-dates">Sept 26–27</div></div>
 
   <div class="day-card" data-city="iguazu" style="animation-delay:.05s">
-    <div class="day-top">
-      <span class="day-badge travel">Sept 26</span>
-      <span class="day-type">Travel + Falls</span>
-      <span class="day-dow">Friday</span>
-    </div>
+    <div class="day-top"><span class="day-badge travel">Sept 26</span><span class="day-type">Travel + Falls</span><span class="day-dow">Friday</span></div>
     <div class="stay"><span class="stay-icon">🏠</span> Hotel in Foz do Iguaçu</div>
     <div class="activities">
       <div class="activity"><div class="activity-dot"></div><span class="activity-text">✈️ SP → Foz do Iguaçu (1.5hr flight)</span></div>
-      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🌊 Brazilian side of the falls — afternoon (2–3hrs, walkways to Devil's Throat)</span></div>
+      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🌊 Brazilian side — panoramic walkways to Devil's Throat</span></div>
     </div>
-    <div class="note">Brazilian side gives the panoramic view. Less walking, more photos. Go afternoon for the light. Speedboat ride under the falls is optional but unforgettable (Macuco Safari).</div>
+    <div class="note">Brazilian side gives the panoramic view. Macuco Safari speedboat ride is unforgettable.</div>
   </div>
 
   <div class="day-card" data-city="iguazu" style="animation-delay:.1s">
-    <div class="day-top">
-      <span class="day-badge">Sept 27</span>
-      <span class="day-type">Falls Day 2</span>
-      <span class="day-dow">Saturday</span>
-    </div>
+    <div class="day-top"><span class="day-badge">Sept 27</span><span class="day-type">Falls Day 2</span><span class="day-dow">Saturday</span></div>
     <div class="stay"><span class="stay-icon">🏠</span> Hotel in Foz do Iguaçu</div>
     <div class="activities">
-      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🇦🇷 Argentine side of the falls — full day (more trails, closer to the water)</span></div>
-      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">Alternatively: Parque das Aves (bird sanctuary next to Brazilian entrance)</span></div>
+      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🇦🇷 Argentine side — walk over the falls (bring passport)</span></div>
+      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">Parque das Aves (bird sanctuary)</span></div>
     </div>
-    <div class="note">The Argentine side is even more spectacular up close — you walk over the falls. You'll need your passport. Easy border crossing. Budget a full morning + early afternoon.</div>
-    <div class="question">Your original had the 27th blank. Two days at Iguaçu is ideal — Brazilian side day 1, Argentine side day 2. Then fly to Manaus on the 28th morning. Sound right?</div>
+    <div class="note">Argentine side is even more spectacular up close. Easy border crossing.</div>
+    <div class="question">27th was blank in your plan. Two days at Iguaçu is ideal — then fly to Manaus on the 28th. Sound right?</div>
   </div>
 
-  <!-- MANAUS / AMAZON -->
-  <div class="city-header" data-city="manaus"><div class="city-dot"></div><div class="city-name">Manaus & Amazon</div><div class="city-dates">Sept 28–30</div></div>
+  <!-- MANAUS -->
+  <div class="city-header" data-city="manaus"><div class="city-dot"></div><div class="city-name">Manaus &amp; Amazon</div><div class="city-dates">Sept 28–30</div></div>
 
   <div class="day-card" data-city="manaus" style="animation-delay:.05s">
-    <div class="day-top">
-      <span class="day-badge travel">Sept 28</span>
-      <span class="day-type">Travel + Amazon</span>
-      <span class="day-dow">Sunday</span>
-    </div>
+    <div class="day-top"><span class="day-badge travel">Sept 28</span><span class="day-type">Travel + Amazon</span><span class="day-dow">Sunday</span></div>
     <div class="stay"><span class="stay-icon">🏠</span> Amazon lodge or Manaus hotel</div>
     <div class="activities">
-      <div class="activity"><div class="activity-dot"></div><span class="activity-text">✈️ Foz do Iguaçu → Manaus (likely via SP/Brasília, 4–5hr total)</span></div>
-      <div class="activity"><div class="activity-dot"></div><span class="activity-text">🌊 Meeting of the Waters — where the Rio Negro & Solimões merge</span></div>
+      <div class="activity"><div class="activity-dot"></div><span class="activity-text">✈️ Iguaçu → Manaus (via SP/Brasília, ~4–5hr)</span></div>
+      <div class="activity"><div class="activity-dot"></div><span class="activity-text">🌊 Meeting of the Waters — Rio Negro meets Solimões</span></div>
     </div>
-    <div class="note">Consider booking a 2–3 night Amazon jungle lodge (Juma Lodge, Anavilhanas Lodge) instead of staying in Manaus city. They arrange everything: transfers, excursions, meals. Much better experience.</div>
+    <div class="note">A jungle lodge (Juma, Anavilhanas) is a completely different experience from Manaus city. They handle transfers, excursions, meals.</div>
   </div>
 
   <div class="day-card" data-city="manaus" style="animation-delay:.1s">
-    <div class="day-top">
-      <span class="day-badge chill">Sept 29</span>
-      <span class="day-type">Amazon</span>
-      <span class="day-dow">Monday</span>
-    </div>
+    <div class="day-top"><span class="day-badge chill">Sept 29</span><span class="day-type">Amazon</span><span class="day-dow">Monday</span></div>
     <div class="stay"><span class="stay-icon">🏠</span> Amazon lodge</div>
     <div class="activities">
-      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🐊 Night caiman spotting (canoe trip after dark)</span></div>
+      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🐊 Night caiman spotting by canoe</span></div>
       <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🎣 Piranha fishing</span></div>
-      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🌳 Jungle trek with local guide — wildlife spotting</span></div>
+      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🌳 Jungle trek — wildlife spotting</span></div>
       <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🐬 Pink river dolphin encounter</span></div>
     </div>
   </div>
 
   <div class="day-card" data-city="manaus" style="animation-delay:.15s">
-    <div class="day-top">
-      <span class="day-badge">Sept 30</span>
-      <span class="day-type">Amazon / Travel</span>
-      <span class="day-dow">Tuesday</span>
-    </div>
-    <div class="stay"><span class="stay-icon">🏠</span> Amazon lodge → Manaus</div>
+    <div class="day-top"><span class="day-badge">Sept 30</span><span class="day-type">Amazon / Travel</span><span class="day-dow">Tuesday</span></div>
+    <div class="stay"><span class="stay-icon">🏠</span> Lodge → Manaus</div>
     <div class="activities">
       <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🌅 Sunrise canoe paddle</span></div>
-      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🏛️ Afternoon in Manaus: Teatro Amazonas (opera house) — stunning building</span></div>
-      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🛒 Mercado Adolpho Lisboa — local market, Amazonian fruits & fish</span></div>
+      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🏛️ Teatro Amazonas (opera house)</span></div>
+      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🛒 Mercado Adolpho Lisboa — Amazonian fruits &amp; fish</span></div>
     </div>
-    <div class="note">If flying back to Rio on Oct 1, you could fly late on the 30th and arrive evening, or early on the 1st. Manaus → Rio is ~4hr with a connection.</div>
+    <div class="note">Manaus → Rio is ~4hr with a connection. Fly late on 30th or early on Oct 1.</div>
   </div>
 
-  <!-- RIO 2 -->
-  <div class="city-header" data-city="rio"><div class="city-dot"></div><div class="city-name">Rio de Janeiro (return)</div><div class="city-dates">Oct 1–3</div></div>
+  <!-- GROUP SPLITS — Oct 1 -->
+  <div class="city-header" data-city="rio"><div class="city-dot"></div><div class="city-name">Group Splits</div><div class="city-dates">Oct 1</div></div>
 
   <div class="day-card" data-city="rio" style="animation-delay:.05s">
-    <div class="day-top">
-      <span class="day-badge travel">Oct 1</span>
-      <span class="day-type">Travel + Chill</span>
-      <span class="day-dow">Wednesday</span>
-    </div>
-    <div class="stay"><span class="stay-icon">🏠</span> Sathish's place</div>
+    <div class="day-top"><span class="day-badge travel">Oct 1</span><span class="day-type">Travel + Split</span><span class="day-dow">Wednesday</span></div>
     <div class="activities">
-      <div class="activity"><div class="activity-dot"></div><span class="activity-text">✈️ Manaus → Rio</span></div>
-      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">Settle in, low-key evening — you'll have been travelling hard</span></div>
-    </div>
-  </div>
-
-  <div class="day-card" data-city="rio" style="animation-delay:.1s">
-    <div class="day-top">
-      <span class="day-badge chill">Oct 2</span>
-      <span class="day-type">Flex Day</span>
-      <span class="day-dow">Thursday</span>
-    </div>
-    <div class="stay"><span class="stay-icon">🏠</span> Sathish's place</div>
-    <div class="activities">
-      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🏖️ Revisit favourite beach or explore Prainha (quiet, surfer beach)</span></div>
-      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🌿 Tijuca National Park — hike Pedra Bonita for hang-glider views</span></div>
-      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">Catch anything you missed from the first Rio stint</span></div>
-    </div>
-    <div class="question">Oct 2–3 were blank in your plan. Keeping you at Sathish's in Rio — correct?</div>
-  </div>
-
-  <div class="day-card" data-city="rio" style="animation-delay:.15s">
-    <div class="day-top">
-      <span class="day-badge">Oct 3</span>
-      <span class="day-type">Last Rio Day</span>
-      <span class="day-dow">Friday</span>
-    </div>
-    <div class="stay"><span class="stay-icon">🏠</span> Sathish's place</div>
-    <div class="activities">
-      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🛍️ Souvenir shopping — Feira Hippie de Ipanema (Sundays only — so maybe not)</span></div>
-      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🍹 Farewell caipirinhas at a rooftop bar</span></div>
-      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">Pack & prep for SP transfer</span></div>
+      <div class="activity"><div class="activity-dot"></div><span class="activity-text">✈️ Manaus → everyone splits at the airport</span></div>
+      <div class="activity"><div class="activity-dot" style="background:var(--blue)"></div><span class="activity-text" style="color:var(--blue)">🏠 Sathish → back home to Rio</span></div>
+      <div class="activity"><div class="activity-dot" style="background:var(--yellow)"></div><span class="activity-text" style="color:var(--yellow)">🚌✈️ Everyone else → São Paulo (Alex's place)</span></div>
     </div>
   </div>
 
   <!-- SÃO PAULO 2 -->
-  <div class="city-header" data-city="sp"><div class="city-dot"></div><div class="city-name">São Paulo (return)</div><div class="city-dates">Oct 4</div></div>
+  <div class="city-header" data-city="sp"><div class="city-dot"></div><div class="city-name">São Paulo (return)</div><div class="city-dates">Oct 1–4</div></div>
 
   <div class="day-card" data-city="sp" style="animation-delay:.05s">
-    <div class="day-top">
-      <span class="day-badge travel">Oct 4</span>
-      <span class="day-type">Final Day</span>
-      <span class="day-dow">Saturday</span>
-    </div>
+    <div class="day-top"><span class="day-badge travel">Oct 1</span><span class="day-type">Arrive SP</span><span class="day-dow">Wednesday</span></div>
     <div class="stay"><span class="stay-icon">🏠</span> Alex's place</div>
     <div class="activities">
-      <div class="activity"><div class="activity-dot"></div><span class="activity-text">🚌✈️ Rio → São Paulo</span></div>
-      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">Hang with Alex — last night out in SP?</span></div>
+      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">Settle in, low-key evening with Alex</span></div>
     </div>
-    <div class="question">Is Oct 4 your last night, flying home on the 5th? Or are you staying longer at Alex's? Need to know for return flight planning.</div>
+  </div>
+
+  <div class="day-card" data-city="sp" style="animation-delay:.1s">
+    <div class="day-top"><span class="day-badge chill">Oct 2</span><span class="day-type">Flex Day</span><span class="day-dow">Thursday</span></div>
+    <div class="stay"><span class="stay-icon">🏠</span> Alex's place</div>
+    <div class="activities">
+      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🏛️ Mercado Municipal or Pinacoteca if you missed them earlier</span></div>
+      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🎸 Vila Madalena — Beco do Batman, vinyl shops, craft beer</span></div>
+      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🎶 D-Edge or Clash Club — D&amp;B / techno night</span></div>
+    </div>
+    <div class="note">You have more SP time now than in the first stint. Good chance to hit anything you missed or go deeper on the food and nightlife.</div>
+  </div>
+
+  <div class="day-card" data-city="sp" style="animation-delay:.15s">
+    <div class="day-top"><span class="day-badge chill">Oct 3</span><span class="day-type">Flex Day</span><span class="day-dow">Friday</span></div>
+    <div class="stay"><span class="stay-icon">🏠</span> Alex's place</div>
+    <div class="activities">
+      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">☕ Specialty coffee — Coffee Lab, Isso é Café</span></div>
+      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🏙️ Terraço Itália — rooftop views over the skyline</span></div>
+      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🍜 Liberdade (Japantown) for dinner</span></div>
+      <div class="activity"><div class="activity-dot suggestion"></div><span class="activity-text suggestion">🍹 Last night out in SP</span></div>
+    </div>
+  </div>
+
+  <div class="day-card" data-city="sp" style="animation-delay:.2s">
+    <div class="day-top"><span class="day-badge travel">Oct 4</span><span class="day-type">Fly Home</span><span class="day-dow">Saturday</span></div>
+    <div class="stay"><span class="stay-icon">🏠</span> Alex's place</div>
+    <div class="activities">
+      <div class="activity"><div class="activity-dot"></div><span class="activity-text">✈️ Fly home from São Paulo (GRU)</span></div>
+    </div>
   </div>
 
 </div>
 
 <script>
+// Filter
 function filterDays(city){
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   event.target.classList.add('active');
   document.querySelectorAll('.day-card, .city-header').forEach(el=>{
     if(city==='all'){el.style.display='';return}
-    const match=el.dataset.city===city;
-    el.style.display=match?'':'none';
+    el.style.display=el.dataset.city===city?'':'none';
   });
 }
+
+// Map
+const map = L.map('trip-map',{zoomControl:true,scrollWheelZoom:false}).setView([-12,-52],4);
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+  attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+  subdomains:'abcd',maxZoom:18
+}).addTo(map);
+
+const cities=[
+  {name:'Rio de Janeiro',lat:-22.9068,lng:-43.1729,color:'#00d47b',dates:'Sept 17–20',nights:4,
+   highlights:['Christ the Redeemer','Escadaria Selarón','Ipanema & Copacabana','Maracanã','Museu do Amanhã','Sugarloaf','Santa Teresa']},
+  {name:'Ilha Grande',lat:-23.1526,lng:-44.2290,color:'#4ecdc4',dates:'Sept 21–23',nights:3,
+   highlights:['Lopes Mendes Beach hike','Lagoa Azul boat tour','Snorkelling','Waterfall hikes']},
+  {name:'São Paulo',lat:-23.5505,lng:-46.6333,color:'#ffd43b',dates:'Sept 24–25 & Oct 1–4',nights:5,
+   highlights:['Av. Paulista & MASP','Mercado Municipal','Vila Madalena street art','D-Edge / Clash Club','Liberdade']},
+  {name:'Iguaçu Falls',lat:-25.6953,lng:-54.4367,color:'#ff8c42',dates:'Sept 26–27',nights:2,
+   highlights:['Brazilian side panoramas','Argentine side walkways','Macuco Safari speedboat','Parque das Aves']},
+  {name:'Manaus',lat:-3.1190,lng:-60.0217,color:'#ff6b9d',dates:'Sept 28–30',nights:3,
+   highlights:['Meeting of the Waters','Jungle lodge','Piranha fishing','Pink dolphins','Teatro Amazonas']}
+];
+
+// Markers with order numbers
+const orderNums=['①','②','③','④','⑤'];
+cities.forEach((c,i)=>{
+  const icon=L.divIcon({
+    className:'custom-marker',
+    html:`<div class="marker-pulse" style="background:${c.color}"></div>
+          <div class="marker-dot" style="background:${c.color}"></div>
+          <div class="marker-label" style="color:${c.color}"><span style="font-family:JetBrains Mono,monospace;font-size:11px;opacity:.7;margin-right:4px">${orderNums[i]}</span>${c.name}</div>`,
+    iconSize:[160,28],iconAnchor:[7,14]
+  });
+  const highlightHtml=c.highlights.map(h=>`<span>${h}</span>`).join('');
+  L.marker([c.lat,c.lng],{icon}).addTo(map)
+    .bindPopup(`<div class="popup-city">${c.name}</div>
+      <div class="popup-dates">${c.dates} <span class="popup-nights">${c.nights}n</span></div>
+      <div class="popup-highlights">${highlightHtml}</div>`,{maxWidth:220,closeButton:false});
+});
 </script>
 </body>
 </html>
