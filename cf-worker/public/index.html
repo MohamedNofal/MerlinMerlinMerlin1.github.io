@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a0f0d">
+<title>Brazil 2026 · Decide the Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0a0f0d;--card:#111916;--card-hover:#162019;
+  --green:#00d47b;--green-dim:#00d47b22;--green-bright:#3affa0;
+  --yellow:#ffd43b;--orange:#ff8c42;--blue:#4ecdc4;--pink:#ff6b9d;
+  --text:#e8efe8;--text-dim:#7a8f7e;--border:#1e2b22;
+}
+html,body{overscroll-behavior-y:none}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100dvh;overflow-x:hidden;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;opacity:.03;z-index:9999;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+.wrap{max-width:560px;margin:0 auto;padding:1.2rem 1.1rem 6rem;position:relative}
+
+/* top bar */
+.topbar{display:flex;align-items:center;gap:.6rem;justify-content:space-between;margin-bottom:1rem}
+.brand{display:flex;align-items:center;gap:.5rem;font-family:'Playfair Display',serif;font-weight:700;font-size:1.05rem}
+.brand .flag{font-size:1.3rem}
+.tabs{display:flex;gap:.3rem;background:var(--card);border:1px solid var(--border);border-radius:99px;padding:.25rem}
+.tab{padding:.35rem .8rem;border-radius:99px;border:none;background:transparent;color:var(--text-dim);
+  font-size:.75rem;font-weight:600;cursor:pointer;font-family:inherit;transition:.2s}
+.tab.active{background:var(--green-dim);color:var(--green)}
+
+/* progress */
+.progress-wrap{height:5px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:.4rem}
+.progress-bar{height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--blue));border-radius:99px;transition:width .35s cubic-bezier(.4,0,.2,1)}
+.progress-meta{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--text-dim);margin-bottom:1.2rem}
+
+/* hero / start */
+.hero{text-align:center;padding:1.5rem 0 .5rem;position:relative}
+.hero::before{content:'';position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:220px;height:220px;
+  background:radial-gradient(circle,var(--green-dim),transparent 70%);filter:blur(50px);pointer-events:none}
+.hero .flag{font-size:3.2rem;display:block;margin-bottom:.3rem}
+.hero h1{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(2rem,8vw,2.8rem);letter-spacing:-1px;line-height:1.05;
+  background:linear-gradient(135deg,var(--green),var(--blue));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:var(--text-dim);font-size:.95rem;margin-top:.6rem;line-height:1.5;font-weight:300}
+.hero .mono{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--green);margin-top:1rem;letter-spacing:.5px}
+
+.field{margin:1.6rem 0 .4rem;text-align:left}
+.field label{display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim);margin-bottom:.5rem}
+.field input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1rem 1.1rem;
+  color:var(--text);font-family:inherit;font-size:1.05rem;outline:none;transition:.2s}
+.field input:focus{border-color:var(--green);background:var(--card-hover)}
+
+/* big buttons */
+.btn{display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;padding:1.05rem;border-radius:14px;border:none;
+  font-family:inherit;font-size:1rem;font-weight:700;cursor:pointer;transition:transform .12s,filter .2s;margin-top:1rem}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:linear-gradient(135deg,var(--green),#00b368);color:#04140c}
+.btn.primary:disabled{opacity:.4;filter:grayscale(.6)}
+.btn.ghost{background:var(--card);color:var(--text);border:1px solid var(--border)}
+.btn.small{width:auto;padding:.7rem 1.1rem;font-size:.82rem;margin-top:0}
+
+/* question card */
+.qcard{animation:slide .35s cubic-bezier(.2,.7,.2,1)}
+@keyframes slide{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:translateX(0)}}
+.qsection{font-family:'JetBrains Mono',monospace;font-size:.66rem;letter-spacing:.5px;color:var(--green);text-transform:uppercase;margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem}
+.qsection .dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.qtitle{font-family:'Playfair Display',serif;font-weight:700;font-size:1.45rem;line-height:1.2;margin-bottom:.3rem}
+.qtitle .emoji{font-family:'DM Sans';margin-right:.3rem}
+.qmulti{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--blue);background:#4ecdc41a;
+  padding:.15rem .5rem;border-radius:6px;margin-bottom:1rem}
+
+.opts{display:flex;flex-direction:column;gap:.6rem;margin-top:1rem}
+.opt{text-align:left;background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:.95rem 1rem;cursor:pointer;
+  transition:.18s;position:relative;display:flex;gap:.7rem;align-items:flex-start}
+.opt:active{transform:scale(.99)}
+.opt:hover{border-color:var(--green-dim);background:var(--card-hover)}
+.opt.sel{border-color:var(--green);background:var(--green-dim);box-shadow:0 0 0 3px var(--green-dim)}
+.opt .check{flex-shrink:0;width:22px;height:22px;border-radius:50%;border:2px solid var(--border);margin-top:1px;
+  display:flex;align-items:center;justify-content:center;transition:.18s}
+.opt.multi .check{border-radius:7px}
+.opt.sel .check{border-color:var(--green);background:var(--green)}
+.opt.sel .check::after{content:'✓';color:#04140c;font-size:.8rem;font-weight:900}
+.opt .otext{flex:1}
+.opt .olabel{font-weight:600;font-size:.95rem;line-height:1.3}
+.opt .odetail{color:var(--text-dim);font-size:.78rem;line-height:1.4;margin-top:.25rem}
+
+.why{margin-top:1rem;padding:.7rem .85rem;background:#ffd43b14;border-left:2px solid var(--yellow);border-radius:8px;
+  font-size:.76rem;color:#d8c98a;line-height:1.45}
+.why::before{content:'WHY THIS MATTERS — ';font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--yellow);letter-spacing:.5px}
+
+.navrow{display:flex;gap:.7rem;margin-top:1.4rem}
+.navrow .btn{margin-top:0}
+.navrow .btn.ghost{flex:0 0 30%}
+
+/* results */
+.result-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1rem;margin-bottom:.6rem;animation:fadeUp .4s both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
+.rc-q{font-size:.8rem;color:var(--text-dim);margin-bottom:.3rem}
+.rc-a{font-weight:600;font-size:.95rem;color:var(--green-bright);display:flex;gap:.4rem;align-items:flex-start}
+
+.codebox{background:#04140c;border:1px solid var(--green-dim);border-radius:14px;padding:1rem;margin:1rem 0;
+  font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--green-bright);word-break:break-all;line-height:1.5;user-select:all}
+textarea{width:100%;min-height:130px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1rem;
+  color:var(--text);font-family:'JetBrains Mono',monospace;font-size:.8rem;outline:none;resize:vertical;line-height:1.5}
+textarea:focus{border-color:var(--green)}
+
+/* tally */
+.tally-q{margin-bottom:1.4rem;animation:fadeUp .4s both}
+.tally-head{font-family:'Playfair Display',serif;font-weight:700;font-size:1.05rem;margin-bottom:.1rem;line-height:1.25}
+.tally-sec{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--text-dim);text-transform:uppercase;margin-bottom:.6rem}
+.bar-row{margin-bottom:.5rem}
+.bar-top{display:flex;justify-content:space-between;gap:.6rem;font-size:.82rem;margin-bottom:.25rem;align-items:baseline}
+.bar-label{flex:1}.bar-label.win{color:var(--green-bright);font-weight:700}
+.bar-count{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--text-dim);white-space:nowrap}
+.bar-track{height:8px;background:var(--border);border-radius:99px;overflow:hidden}
+.bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--green),var(--blue));transition:width .6s cubic-bezier(.2,.7,.2,1)}
+.bar-fill.tie{background:linear-gradient(90deg,var(--orange),var(--yellow))}
+.consensus-tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.58rem;padding:.15rem .5rem;border-radius:6px;margin-left:.4rem;vertical-align:middle}
+.consensus-tag.agree{background:var(--green-dim);color:var(--green)}
+.consensus-tag.split{background:#ff8c4222;color:var(--orange)}
+.voters{font-size:.68rem;color:var(--text-dim);margin-top:.3rem}
+
+.empty{text-align:center;color:var(--text-dim);padding:3rem 1rem;font-size:.9rem;line-height:1.6}
+.toast{position:fixed;left:50%;bottom:calc(1.5rem + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);
+  background:var(--green);color:#04140c;padding:.7rem 1.3rem;border-radius:99px;font-weight:700;font-size:.85rem;
+  opacity:0;pointer-events:none;transition:.25s;z-index:200;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.hidden{display:none!important}
+
+/* live */
+.syncbar{font-family:'JetBrains Mono',monospace;font-size:.74rem;padding:.7rem .9rem;border-radius:12px;margin-top:1.2rem;
+  display:flex;align-items:center;gap:.5rem;border:1px solid var(--border);background:var(--card)}
+.syncbar.ok{border-color:var(--green-dim);color:var(--green-bright)}
+.syncbar.off{border-color:#ff8c4233;color:var(--orange)}
+.livebar{display:flex;align-items:center;gap:.5rem;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--green-bright);
+  background:var(--card);border:1px solid var(--green-dim);border-radius:12px;padding:.6rem .9rem}
+.live-dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 var(--green);animation:lpulse 1.8s infinite}
+@keyframes lpulse{0%{box-shadow:0 0 0 0 rgba(0,212,123,.5)}70%{box-shadow:0 0 0 7px rgba(0,212,123,0)}100%{box-shadow:0 0 0 0 rgba(0,212,123,0)}}
+.fallback{margin-top:1.8rem;border-top:1px solid var(--border);padding-top:1rem}
+.fallback summary{cursor:pointer;color:var(--text-dim);font-size:.8rem;font-weight:600;list-style:none}
+.fallback summary::before{content:'▸ ';color:var(--green)}
+.fallback[open] summary::before{content:'▾ '}
+.fallback textarea{margin-top:.8rem}
+.hint{font-size:.74rem;color:var(--text-dim);line-height:1.5;margin:.4rem 0 1rem}
+a{color:var(--green)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand"><span class="flag">🇧🇷</span> Decide the Plan</div>
+    <div class="tabs">
+      <button class="tab active" data-tab="quiz" onclick="switchTab('quiz')">Quiz</button>
+      <button class="tab" data-tab="tally" onclick="switchTab('tally')">Tally</button>
+    </div>
+  </div>
+
+  <!-- ===== QUIZ TAB ===== -->
+  <div id="tab-quiz">
+
+    <!-- START -->
+    <div id="screen-start">
+      <div class="hero">
+        <span class="flag">🇧🇷</span>
+        <h1>Brazil<br>Sept–Oct 2026</h1>
+        <p>5 guys, 18 nights, a hundred little arguments waiting to happen.<br>Answer the gaps and watch what the squad actually agrees on — live.</p>
+        <div class="mono" id="qcount">— questions · ~4 min</div>
+      </div>
+      <div class="field">
+        <label>Your name</label>
+        <input id="nameInput" placeholder="e.g. Sathish, Alex…" autocomplete="given-name" maxlength="20">
+      </div>
+      <button class="btn primary" id="startBtn" disabled onclick="start()">Let's decide →</button>
+      <p class="hint" style="text-align:center;margin-top:.8rem">No login, no server. Your answers stay on your phone until you choose to share a code.</p>
+    </div>
+
+    <!-- QUESTIONS -->
+    <div id="screen-q" class="hidden">
+      <div class="progress-wrap"><div class="progress-bar" id="pbar"></div></div>
+      <div class="progress-meta"><span id="pmeta">Q1</span><span id="psec"></span></div>
+      <div id="qmount"></div>
+    </div>
+
+    <!-- RESULTS -->
+    <div id="screen-result" class="hidden">
+      <div class="hero" style="padding-bottom:0">
+        <span class="flag">✅</span>
+        <h1 style="font-size:2rem">Locked in,<br><span id="resName">you</span>!</h1>
+        <p>Here's your call on every gap. Open the <b>Tally</b> tab to see the squad's live consensus update as everyone finishes.</p>
+      </div>
+
+      <div id="syncStatus" class="syncbar"></div>
+
+      <div id="codeFallback" class="hidden">
+        <div class="field" style="margin-top:1.4rem"><label>Your share code (live sync off — send this instead)</label></div>
+        <div class="codebox" id="codeOut"></div>
+        <div class="navrow">
+          <button class="btn primary" onclick="copyCode()">📋 Copy code</button>
+          <button class="btn ghost" onclick="shareWA()">💬 WhatsApp</button>
+        </div>
+      </div>
+
+      <div style="margin:1.8rem 0 .6rem;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px">Your picks</div>
+      <div id="resList"></div>
+
+      <button class="btn ghost" style="margin-top:1.4rem" onclick="restart()">↺ Redo my answers</button>
+    </div>
+  </div>
+
+  <!-- ===== TALLY TAB ===== -->
+  <div id="tab-tally" class="hidden">
+    <div class="hero" style="padding:1rem 0 .3rem">
+      <h1 style="font-size:1.9rem">Group Tally</h1>
+      <p>The squad's consensus on every decision — updating live as everyone votes.</p>
+    </div>
+
+    <div id="liveBar" class="livebar hidden">
+      <span class="live-dot"></span>
+      <span id="liveText">Live · room <b id="roomName"></b></span>
+      <button class="btn small ghost" style="margin-left:auto" onclick="loadTally()">↻ Refresh</button>
+    </div>
+
+    <div id="tallyOut" style="margin-top:1.2rem"></div>
+
+    <!-- Manual fallback (shown when live sync is unavailable, e.g. on GitHub Pages) -->
+    <details id="pasteFallback" class="fallback">
+      <summary>Paste share codes manually</summary>
+      <p class="hint">Each person taps <b>Copy code</b> after finishing and drops it in the chat. Paste them here — one per line.</p>
+      <textarea id="codesIn" placeholder="alex|2-0-1-...&#10;sathish|1-0-3-...&#10;(one code per line)"></textarea>
+      <button class="btn primary" onclick="runTally()">🧮 Tally the squad</button>
+    </details>
+  </div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const QUIZ = [
+{"id":"rio-saturday-shape","section":"Rio de Janeiro","question":"How do we build the Saturday around the Maracanã match?","type":"single","emoji":"⚽","options":[{"label":"Keep the full order (beach → Museu do Amanhã → food tour → Maracanã)","detail":"See everything, but it's a rushed day and risks a tired, late steak dinner."},{"label":"Drop Museu do Amanhã, longer beach + food tour","detail":"Cuts the one museum stop the group is lukewarm on; more chill before the match."},{"label":"Match-first day: pre-game bar build-up + Maracanã, steak after","detail":"Maximises the football and the night out; sacrifices most daytime sightseeing."},{"label":"Beach morning only, save energy for match + steak + Lapa","detail":"Lowest-effort daytime so everyone's fresh to go big at night."}],"why":"Sept 19 is overloaded and stacks a museum the group doesn't love; the real fork is what to cut so the football and steak night land."},
+{"id":"rio-steakhouse","section":"Rio de Janeiro","question":"Which steakhouse for the Sept 19 post-football dinner?","type":"single","emoji":"🥩","options":[{"label":"Fogo de Chão (classic rodízio)","detail":"All-you-can-eat skewers, big-night value — the safe crowd-pleaser for 5 hungry guys."},{"label":"Porcão (waterfront views)","detail":"Rodízio plus a Sugarloaf/bay view — more scenic but touristy and pricier."},{"label":"CT Boucherie (upscale, Leblon)","detail":"Chef-driven à la carte cuts, best quality — smaller portions, most expensive."}],"why":"The itinerary flags this as open with three named options and no pick; it's the group's one big steak night in Rio and needs a single booking."},
+{"id":"rio-adrenaline-addon","section":"Rio de Janeiro","question":"Add an adventure/adrenaline activity in Rio?","type":"single","emoji":"🪂","options":[{"label":"Tandem hang-gliding off Pedra Bonita","detail":"Pure adrenaline with the best Rio view — weather-dependent and ~R$600+ each."},{"label":"Guided favela tour (Rocinha or Santa Marta)","detail":"Real culture without museum overload — pick an ethical community-led operator."},{"label":"Hike Pedra do Telégrafo for the cliff photo","detail":"Active and cheap with the iconic hanging-off-a-cliff shot, but a half-day out."},{"label":"Skip it — Rio days are already full","detail":"Save the adrenaline budget for Ilha Grande/Foz; keep Rio on beach + football + nightlife."}],"why":"The current Rio plan has no adrenaline despite this group loving it — decide before days fill up."},
+{"id":"rio-last-night","section":"Rio de Janeiro","question":"Last Rio night (Sept 20) — how hard do we go in Lapa?","type":"single","emoji":"🎉","options":[{"label":"Full Lapa night out — samba clubs + live forró","detail":"The classic big Rio send-off, but a brutal 7am boat the next morning."},{"label":"A couple of botecos for caipirinhas, then early night","detail":"Tastes the Lapa street-party vibe without wrecking the early start."},{"label":"Stay local in Ipanema/Copacabana for chilled drinks","detail":"Beach-side and relaxed, skips the Lapa trek and crowds."},{"label":"Quiet night, pack and rest for Ilha Grande","detail":"Smartest for the early transfer, but a flat finish to Rio."}],"why":"It's the last night before an early 7am departure for Ilha Grande — energy now vs energy tomorrow."},
+{"id":"lopes-mendes-vs-boat","section":"Ilha Grande","question":"Two full days: Lopes Mendes hike vs Lagoa Azul boat?","type":"single","emoji":"🥾","options":[{"label":"Keep the plan: hike Day 2, boat tour Day 3","detail":"Balanced — trek to Brazil's best beach, then a chill snorkel day to recover."},{"label":"Boat tour priority, skip the full hike","detail":"Less sweat, more beers-on-a-boat and snorkelling, but you miss the iconic trail."},{"label":"Water-taxi to Lopes Mendes, hike one way only","detail":"Get the famous beach without the 4hr round-trip; saves legs for the night out."},{"label":"Hardcore: Lopes Mendes AND Cachoeira da Feiticeira","detail":"Max adventure for the fit crew, but two demanding days with little downtime."}],"why":"Both days are still suggestions and they compete for energy — you can't do both well."},
+{"id":"pousada-style","section":"Ilha Grande","question":"What pousada style do we book in Abraão?","type":"single","emoji":"🏖️","options":[{"label":"Beachfront pousada with pool, mid-high budget","detail":"Comfort and a base to drink/relax at; car-free so the pousada IS the hangout."},{"label":"Central Abraão guesthouse, walk to bars","detail":"Roll from seafood dinner to beach bars to bed — best for the night-out crew."},{"label":"Quieter pousada just outside the village","detail":"Calmer, better for sleep, but a walk back from town after drinks."}],"why":"Stay is only marked 'book ahead' with no style chosen; location-vs-comfort prices vary a lot."},
+{"id":"party-vs-detox","section":"Ilha Grande","question":"Nights on the island — party or detox?","type":"single","emoji":"🍹","options":[{"label":"Big nights in Abraão every evening","detail":"Caipirinhas and beach bars all three nights — fun, but wrecked for the 8am hike."},{"label":"One blowout night, two early ones","detail":"Save the big session for after the hike — best of both."},{"label":"Full detox, early nights, sunrise swims","detail":"Lean into the no-signal reset; save the partying for Rio/Foz/SP."}],"why":"The plan says 'digital detox' but also caipirinhas every night — set the actual tempo around early starts."},
+{"id":"iguazu-travel-day","section":"Iguaçu Falls","question":"How do we handle the brutal Sept 24 travel day?","type":"single","emoji":"✈️","options":[{"label":"Earliest boat + afternoon flight from Santos Dumont (SDU)","detail":"Arrive Foz by evening with time to settle; downside is an early start + tight connection."},{"label":"Relaxed morning, evening flight from Galeão (GIG)","detail":"More wiggle room and flight options, but arrive Foz late and tired."},{"label":"Overnight in Rio, fly to Foz first thing Sept 25","detail":"Easiest travel and a bonus Rio night, but it eats into the only full falls day."}],"why":"Boat, bus and a 2hr flight stack up; the choice decides whether we arrive wrecked or fresh."},
+{"id":"iguazu-which-sides","section":"Iguaçu Falls","question":"Argentine side only, or squeeze in the Brazilian side?","type":"single","emoji":"🌊","options":[{"label":"Argentine side only (Upper, Lower & Devil's Throat)","detail":"The walk-into-the-falls day; you get soaked, no rushing, relaxed evening in Foz."},{"label":"Both sides — Brazilian panorama AM, Argentine after","detail":"Full picture from both angles, but a tight two-border, passport-heavy day."},{"label":"Brazilian side + bird park (Parque das Aves)","detail":"Adds the toucan/macaw walk-through; more to see but eats serious time."}],"why":"Only the Argentine side is confirmed and we have one real falls day — adding more means cutting time."},
+{"id":"iguazu-adrenaline","section":"Iguaçu Falls","question":"Which adrenaline add-on at the falls?","type":"single","emoji":"🚁","options":[{"label":"Macuco Safari boat — speedboat under the falls","detail":"Soaking, high-adrenaline, gets you into the cataracts; pairs with the Brazilian side."},{"label":"Helicopter ride over the falls","detail":"The aerial money-shot of the whole horseshoe; ~10 min, pricier, Brazil side only."},{"label":"Both — chopper for the view, then the boat","detail":"Maximum adventure day, but stacks cost and commits you to the Brazilian side."},{"label":"Skip the add-ons — just the trails","detail":"Cheapest and most relaxed; save energy and cash for the Amazon and SP."}],"why":"Base plan is trails only; helicopter and speedboat clash on time and budget, so pick one."},
+{"id":"lodge-vs-manaus-base","section":"Manaus & Amazon","question":"Sleep in the jungle, or keep a Manaus hotel base?","type":"single","emoji":"🌳","options":[{"label":"Full jungle lodge, 2–3 nights in","detail":"Real rainforest nights and wildlife, but a 2–4hr boat transfer and no going out."},{"label":"Manaus hotel base, day trips to the river","detail":"AC, bars and steak each night; still see Meeting of the Waters but miss deep jungle."},{"label":"Split it — 1 night lodge, then back to Manaus","detail":"Taste of both: one caiman/canoe night then city comfort, but burns time on transfers."}],"why":"Sept 26–28 is left as 'hotel OR lodge' and the whole Amazon experience hinges on this."},
+{"id":"lodge-tier","section":"Manaus & Amazon","question":"If we do a lodge — rustic adventure or comfort?","type":"single","emoji":"🛖","options":[{"label":"Anavilhanas — comfort/eco-resort","detail":"Pool, proper food, AC bungalows; priciest but everyone sleeps well."},{"label":"Juma Amazon Lodge — mid, stilted bungalows over water","detail":"Iconic treehouse feel, solid guides, partial AC; the classic balance pick."},{"label":"Rustic budget camp — hammocks/fan","detail":"Cheapest and most adventurous, but heat and basic toilets may wreck sleep."}],"why":"Tier sets the whole Amazon budget and feel — agree the spend before booking."},
+{"id":"activity-intensity","section":"Manaus & Amazon","question":"Which Amazon activities are we locking in?","type":"multi","emoji":"🐊","options":[{"label":"Night caiman spotting by canoe","detail":"Hands-on adrenaline, guides catch small caiman — peak bragging-rights activity."},{"label":"Piranha fishing (then eat the catch)","detail":"Active and food-linked; fits the steak-and-good-food crowd."},{"label":"Sunrise canoe paddle","detail":"Best wildlife and photos, but a brutal early start after a lodge night."},{"label":"Riverside community visit","detail":"Light culture, no adrenaline — first to cut if the day feels too tame."}],"why":"All Amazon activities are unconfirmed 'suggestions' — vote the keepers in so guides can plan."},
+{"id":"sp-football-match","section":"São Paulo","question":"Add a São Paulo football match — which club?","type":"single","emoji":"⚽","options":[{"label":"Corinthians at Neo Química Arena","detail":"Most fanatical crowd in Brazil, pure atmosphere — but far east, eats a whole evening."},{"label":"Palmeiras at Allianz Parque","detail":"Modern arena, central-ish, electric support — easiest big-club experience to slot in."},{"label":"São Paulo FC at Morumbi","detail":"Iconic huge stadium; depends on the fixture being at home that window."},{"label":"Skip it — we already did Maracanã","detail":"Frees the evening for D-Edge / rooftops / steak instead of a second stadium night."}],"why":"The group loves football and SP has no match yet — a stadium night competes with nightlife."},
+{"id":"sp-friday-nightlife","section":"São Paulo","question":"Friday night out (Oct 2) — which club?","type":"single","emoji":"🎶","options":[{"label":"D-Edge — proper techno/D&B temple","detail":"World-famous sound, goes till sunrise; serious techno, less casual mingling."},{"label":"Clash Club — bigger, mixed crowd","detail":"More varied music and easier to mingle, but less of a connoisseur techno night."},{"label":"Vila Madalena bar crawl, skip the club","detail":"Stay in the craft-beer/street-art zone — cheaper, more social, no big dancefloor."},{"label":"Rooftop lounge first, decide club later","detail":"Keeps Friday flexible and stylish, but risks indecision and a late Uber chase."}],"why":"Oct 2 is 'D-Edge or Clash Club'; pick one venue so the group doesn't split up at 1am."},
+{"id":"sp-daytrip-vs-city","section":"São Paulo","question":"Saturday Oct 3 — day-trip out, or stay in SP?","type":"single","emoji":"🏞️","options":[{"label":"Beach day to Guarujá / Santos","detail":"~1.5hr to the coast for one last beach — fits beach-lovers, but long round trip."},{"label":"Adrenaline near Serra do Mar (paraglide/hike)","detail":"Adventure hit close to SP; great photos, but weather-dependent and ties up Saturday."},{"label":"Stay in SP — Paulista + Terraço Itália + big night","detail":"Keeps the city finale and a strong last night out, easy GRU exit Sunday."},{"label":"Half-day Paulista, then chill for the finale","detail":"Lightest option — saves energy for the last night, no adventure payoff."}],"why":"Oct 3 is a chill city day but this group craves beaches/adrenaline — escape vs finale."},
+{"id":"sp-finale-night","section":"São Paulo","question":"Saturday Oct 3 — how should the finale feel?","type":"single","emoji":"🥩","options":[{"label":"Blowout churrascaria steak dinner","detail":"Best-meal-of-the-trip steak finale — leans food over party, may end earlier."},{"label":"Rooftop drinks at Terraço Itália then bars","detail":"Skyline views + social night, balanced energy; not a hardcore club."},{"label":"Full second club night (Saturday peak)","detail":"Maximum party to close the trip — brutal given the early GRU flight Sunday."},{"label":"Steak first, then one big club to send it","detail":"Has it all — food then party — but a long night right before flying home."}],"why":"The plan just says 'last night out' — lock the vibe for the grand finale."},
+{"id":"budget-tier","section":"Logistics & Budget","question":"Overall spend tier per person (home flights excluded)?","type":"single","emoji":"💸","options":[{"label":"Backpacker — ~£1,400pp on the ground","detail":"Hostels/cheap pousadas, basic lodge, eat local, skip the upscale steakhouse."},{"label":"Comfortable mid — ~£2,200pp","detail":"Nice Airbnb in Rio, mid pousada, solid lodge, one big steak night, nights out budgeted."},{"label":"Treat-yourselves — ~£3,200pp+","detail":"Best stays, premium lodge, CT Boucherie, no flinching at bar tabs or good seats."},{"label":"Mixed — splurge on experiences, save on beds","detail":"Cheap rooms but big spend on lodge, football, boats and steak — money to memories."}],"why":"Every booking scales with this — we can't book a thing until we agree what 'reasonable' means."},
+{"id":"book-flights-now","section":"Logistics & Budget","question":"Book internal flights & Amazon lodge NOW, or wait?","type":"single","emoji":"✈️","options":[{"label":"Book everything now","detail":"Lock flights + lodge while cheap; risk is forfeited deposits if someone drops."},{"label":"Book the lodge now, flights later","detail":"Lodge is the scarce sell-out item; hold flights a few months."},{"label":"Book flights now, lodge later","detail":"Connections are the fragile part of the route; secure them, shop lodges later."},{"label":"Wait — sort it together in ~3 months","detail":"Keeps everyone flexible, but prices and lodge availability will be worse."}],"why":"The route hinges on tight no-direct connections and lodges sell out — money on the line."},
+{"id":"group-kitty","section":"Logistics & Budget","question":"How do we handle shared money?","type":"single","emoji":"🧾","options":[{"label":"Splitwise, settle at the end","detail":"Pay on your own card, log it, one reckoning on the flight home — zero upfront cash."},{"label":"Upfront kitty (~£400pp), one treasurer","detail":"One person pays shared stuff from the pot, top up if low — least daily friction."},{"label":"Rotating 'card of the day'","detail":"Each man covers a day in turn, no app; relies on roughly even spend."},{"label":"Pre-book big items split now, cash for the rest","detail":"Flights/lodge/football paid 5 ways up front; food and beers settled loosely."}],"why":"Tons of costs are shared — shuttles, boats, lodge, tickets, dinners, rounds — ad-hoc gets messy."},
+{"id":"pace","section":"Group Vibe","question":"How packed do we want the daily pace?","type":"single","emoji":"⚡","options":[{"label":"Go hard — cram it all in","detail":"Hit every activity and still party; 18 nights full throttle, recover at home."},{"label":"Packed days, but protect the nights out","detail":"Ease starts the day after Lapa and D-Edge so the big nights actually land."},{"label":"Balanced — one anchor activity + free time daily","detail":"Pick the must-do each day, leave the rest optional — sustainable over 18 days."},{"label":"Relaxed — lean into beach/island chill","detail":"Treat Ilha Grande and the Amazon as the core, cut extra stops, never rush."}],"why":"Heavy days and late nights stack up; agreeing intensity stops one camp burning out the other."},
+{"id":"biggest-splurge","section":"Group Vibe","question":"Which single experience is the trip's big-ticket splurge?","type":"single","emoji":"💎","options":[{"label":"Premium Amazon jungle lodge","detail":"All-in lodge over a basic hotel — best wildlife and once-in-a-lifetime, but priciest."},{"label":"Maracanã match — best seats & hospitality","detail":"Upgrade to premium seats/box for the Sept 19 fixture instead of the terraces."},{"label":"Top-end Rio steak night at CT Boucherie","detail":"Make the Sept 19 dinner the blowout — upscale Leblon over a standard rodízio."},{"label":"Spread it — keep all three mid-tier","detail":"No single splurge; solid lodge, decent seats, good steak, more for nights out."}],"why":"The budget can't be top-tier on everything — agree where the real money goes."},
+{"id":"dietary-drinking-baseline","section":"Group Vibe","question":"Our food & drink baseline (tick all true)?","type":"multi","emoji":"🍽️","options":[{"label":"Full carnivore — rodízio & steakhouses are sacred","detail":"Confirms the meat-heavy nights work for everyone; book without hedging."},{"label":"At least one needs veggie/fish-friendly options","detail":"Pick steakhouses and a lodge with real non-meat menus."},{"label":"Caipirinhas and beers flow freely","detail":"Budget for booze on beach days and nights out; stock lodge and boats."},{"label":"At least one is light/non-drinker — keep it relaxed","detail":"No pressure drinking; make sure clubs and lodge nights still work sober."}],"why":"The plan leans on rodízio, seafood and a full-board lodge — get the headcount now."}
+];
+
+/* ---------- state ---------- */
+const LS='brazilquiz.v1';
+let state={name:'',idx:0,answers:{}};
+try{const s=JSON.parse(localStorage.getItem(LS));if(s)state=s;}catch(e){}
+
+/* live backend (Cloudflare Worker + KV). Same-origin /api/*; falls back to paste mode if absent. */
+const ROOM=(new URLSearchParams(location.search).get('room')||'brazil2026').toLowerCase();
+let LIVE=null;            // null=unknown, true/false once probed
+let liveTimer=null;       // auto-refresh interval
+async function probeLive(){
+  if(LIVE!==null)return LIVE;
+  try{const r=await fetch('/api/results?room='+encodeURIComponent(ROOM),{cache:'no-store'});LIVE=r.ok;}
+  catch(e){LIVE=false;}
+  return LIVE;
+}
+document.getElementById('qcount').textContent=QUIZ.length+' questions · ~4 min';
+
+const $=id=>document.getElementById(id);
+function save(){localStorage.setItem(LS,JSON.stringify(state));}
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1600);}
+
+/* ---------- tabs ---------- */
+function switchTab(t){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));
+  $('tab-quiz').classList.toggle('hidden',t!=='quiz');
+  $('tab-tally').classList.toggle('hidden',t!=='tally');
+  if(liveTimer){clearInterval(liveTimer);liveTimer=null;}
+  if(t==='tally'){ loadTally(); }
+}
+
+/* ---------- start ---------- */
+$('nameInput').value=state.name||'';
+$('startBtn').disabled=!$('nameInput').value.trim();
+$('nameInput').addEventListener('input',e=>{$('startBtn').disabled=!e.target.value.trim();});
+$('nameInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.value.trim())start();});
+
+function show(screen){['screen-start','screen-q','screen-result'].forEach(s=>$(s).classList.toggle('hidden',s!==screen));window.scrollTo(0,0);}
+function start(){state.name=$('nameInput').value.trim();save();
+  if(Object.keys(state.answers).length===QUIZ.length){finish();}else{state.idx=firstUnanswered();save();render();show('screen-q');}}
+function firstUnanswered(){for(let i=0;i<QUIZ.length;i++){if(state.answers[QUIZ[i].id]==null)return i;}return QUIZ.length-1;}
+
+/* ---------- render question ---------- */
+function render(){
+  const q=QUIZ[state.idx];
+  $('pbar').style.width=((state.idx)/QUIZ.length*100)+'%';
+  $('pmeta').textContent='Q'+(state.idx+1)+' / '+QUIZ.length;
+  $('psec').textContent=q.section;
+  const cur=state.answers[q.id];
+  const sel=i=> q.type==='multi' ? (Array.isArray(cur)&&cur.includes(i)) : cur===i;
+  $('qmount').innerHTML=`
+    <div class="qcard">
+      <div class="qsection"><span class="dot"></span>${q.section}</div>
+      <div class="qtitle"><span class="emoji">${q.emoji}</span>${q.question}</div>
+      ${q.type==='multi'?'<div class="qmulti">SELECT ALL THAT APPLY</div>':''}
+      <div class="opts">
+        ${q.options.map((o,i)=>`
+          <div class="opt ${q.type==='multi'?'multi':''} ${sel(i)?'sel':''}" onclick="pick(${i})">
+            <div class="check"></div>
+            <div class="otext"><div class="olabel">${o.label}</div><div class="odetail">${o.detail}</div></div>
+          </div>`).join('')}
+      </div>
+      <div class="why">${q.why}</div>
+      <div class="navrow">
+        ${state.idx>0?'<button class="btn ghost" onclick="prev()">← Back</button>':''}
+        <button class="btn primary" id="nextBtn" onclick="next()">${state.idx===QUIZ.length-1?'Finish ✓':'Next →'}</button>
+      </div>
+    </div>`;
+  updateNext();
+}
+function answered(){const q=QUIZ[state.idx];const c=state.answers[q.id];return q.type==='multi'?Array.isArray(c)&&c.length>0:c!=null;}
+function updateNext(){const b=$('nextBtn');if(b)b.disabled=!answered();}
+
+function pick(i){
+  const q=QUIZ[state.idx];
+  if(q.type==='multi'){
+    let c=Array.isArray(state.answers[q.id])?state.answers[q.id].slice():[];
+    const k=c.indexOf(i);if(k>=0)c.splice(k,1);else c.push(i);c.sort((a,b)=>a-b);
+    state.answers[q.id]=c;
+  }else{
+    state.answers[q.id]=i;save();
+    // auto-advance on single select
+    document.querySelectorAll('.opt').forEach((el,n)=>el.classList.toggle('sel',n===i));
+    setTimeout(()=>{ state.idx===QUIZ.length-1?finish():next(); },230);
+    return;
+  }
+  save();render();
+}
+function next(){if(!answered())return;if(state.idx<QUIZ.length-1){state.idx++;save();render();}else{finish();}}
+function prev(){if(state.idx>0){state.idx--;save();render();}}
+
+/* ---------- encode / decode ---------- */
+function encode(){
+  const parts=QUIZ.map(q=>{const a=state.answers[q.id];if(a==null)return '';return Array.isArray(a)?a.join('.'):String(a);});
+  return state.name.replace(/[|\n]/g,' ').trim()+'|'+parts.join('-');
+}
+function decode(code){
+  const [name,body]=code.split('|');if(body==null)return null;
+  const parts=body.trim().split('-');const ans={};
+  QUIZ.forEach((q,i)=>{const p=parts[i];if(p==null||p==='')return;
+    ans[q.id]=q.type==='multi'?p.split('.').map(Number).filter(n=>!isNaN(n)):Number(p);});
+  return {name:(name||'?').trim(),ans};
+}
+
+/* ---------- results ---------- */
+function finish(){
+  $('pbar').style.width='100%';$('resName').textContent=state.name||'you';
+  const code=encode();$('codeOut').textContent=code;
+  $('resList').innerHTML=QUIZ.map(q=>{const a=state.answers[q.id];if(a==null)return '';
+    const txt=Array.isArray(a)?a.map(i=>q.options[i].label).join(' · '):q.options[a].label;
+    return `<div class="result-card"><div class="rc-q">${q.emoji} ${q.question}</div><div class="rc-a">→ ${txt}</div></div>`;}).join('');
+  save();show('screen-result');
+  syncVote();
+}
+async function syncVote(){
+  const sb=$('syncStatus');sb.className='syncbar';sb.textContent='⏳ Syncing to the squad…';
+  const live=await probeLive();
+  if(!live){ sb.className='syncbar off';sb.textContent='⚠️ Live sync off — share your code below instead.';$('codeFallback').classList.remove('hidden');return; }
+  try{
+    const r=await fetch('/api/submit',{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({room:ROOM,name:state.name,answers:state.answers})});
+    if(!r.ok)throw 0;
+    sb.className='syncbar ok';sb.innerHTML='✓ Synced to room <b>'+ROOM+'</b> — open the Tally tab to watch it live.';
+    $('codeFallback').classList.add('hidden');
+  }catch(e){
+    sb.className='syncbar off';sb.textContent='⚠️ Couldn’t reach the server — share your code below instead.';
+    $('codeFallback').classList.remove('hidden');
+  }
+}
+function copyCode(){const c=encode();navigator.clipboard?.writeText(c).then(()=>toast('Code copied!'),()=>fallbackCopy(c));}
+function fallbackCopy(t){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('Code copied!');}
+function shareWA(){const c=encode();const msg=`🇧🇷 My Brazil 2026 picks — paste this in the Tally tab:\n\n${c}\n\n${location.href.split('#')[0]}`;
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');}
+function restart(){state.idx=0;state.answers={};save();render();show('screen-q');}
+
+/* ---------- tally ---------- */
+let lastUpdate=0;
+async function loadTally(){
+  const live=await probeLive();
+  const bar=$('liveBar');
+  if(live){
+    bar.classList.remove('hidden');$('pasteFallback').classList.add('hidden');
+    try{
+      const r=await fetch('/api/results?room='+encodeURIComponent(ROOM),{cache:'no-store'});
+      const data=await r.json();
+      lastUpdate=Date.now();
+      $('liveText').innerHTML='Live · room <b>'+ROOM+'</b> · '+ (data.people?.length||0) +' voted';
+      renderTally(data.people||[]);
+    }catch(e){ $('tallyOut').innerHTML='<div class="empty">Couldn’t load live results. Tap ↻ to retry.</div>'; }
+    if(!liveTimer)liveTimer=setInterval(()=>{ if(!$('tab-tally').classList.contains('hidden'))loadTally(); },5000);
+  }else{
+    bar.classList.add('hidden');$('pasteFallback').classList.remove('hidden');$('pasteFallback').open=true;
+    runTally();
+  }
+}
+function runTally(){
+  const raw=$('codesIn').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  const people=raw.map(decode).filter(Boolean);
+  renderTally(people);
+}
+function renderTally(people){
+  const out=$('tallyOut');
+  if(!people.length){out.innerHTML='<div class="empty">No votes yet ☝️<br><br>Each person opens this page, finishes the quiz, and their answers appear here automatically.</div>';return;}
+  let html=`<div class="hint"><b>${people.length}</b> ${people.length===1?'person':'people'}: ${people.map(p=>p.name).join(', ')}</div>`;
+  QUIZ.forEach(q=>{
+    const counts=q.options.map(()=>0);const voters=q.options.map(()=>[]);let total=0;
+    people.forEach(p=>{const a=p.ans[q.id];if(a==null)return;
+      const arr=Array.isArray(a)?a:[a];arr.forEach(i=>{if(counts[i]!=null){counts[i]++;voters[i].push(p.name);}});total++;});
+    if(total===0)return;
+    const max=Math.max(...counts);const winners=counts.filter(c=>c===max&&c>0).length;
+    const tie=winners>1;
+    const agree=!tie && max===total && q.type==='single';
+    html+=`<div class="tally-q"><div class="tally-sec">${q.section}</div>
+      <div class="tally-head">${q.emoji} ${q.question}
+        <span class="consensus-tag ${tie?'split':'agree'}">${tie?'SPLIT — talk it out':(agree?'UNANIMOUS':'MAJORITY')}</span></div>`;
+    // order options by count desc
+    const order=q.options.map((o,i)=>i).sort((a,b)=>counts[b]-counts[a]);
+    order.forEach(i=>{
+      if(counts[i]===0&&q.options.length>4) return;
+      const pct=total?Math.round(counts[i]/total*100):0;
+      const win=counts[i]===max&&max>0;
+      html+=`<div class="bar-row">
+        <div class="bar-top"><span class="bar-label ${win?'win':''}">${q.options[i].label}</span><span class="bar-count">${counts[i]}/${total}</span></div>
+        <div class="bar-track"><div class="bar-fill ${tie&&win?'tie':''}" style="width:${pct}%"></div></div>
+        ${counts[i]>0?`<div class="voters">${voters[i].join(', ')}</div>`:''}
+      </div>`;
+    });
+    html+=`</div>`;
+  });
+  out.innerHTML=html;
+}
+
+/* ---------- boot ---------- */
+if(state.name && Object.keys(state.answers).length===QUIZ.length){ /* stay on start, they can redo */ }
+</script>
+</body>
+</html>
