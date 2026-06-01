@@ -10,4 +10,4 @@ assets = { directory = "./public", binding = "ASSETS" }
 # then paste the printed id below.
 [[kv_namespaces]]
 binding = "VOTES"
-id = "REPLACE_WITH_KV_NAMESPACE_ID"
+id = "35b1c8fbc2d94d16beba18721ff24b94"
