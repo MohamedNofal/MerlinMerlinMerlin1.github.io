@@ -83,7 +83,9 @@ h2.title{font-family:'Playfair Display',serif;font-weight:700;font-size:1.7rem;l
 .days{margin:1.2rem 0}
 .day{display:flex;gap:.8rem;padding:.7rem 0;border-bottom:1px solid var(--border)}
 .day:last-child{border-bottom:none}
-.day .d{flex:0 0 54px;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--green);font-weight:600;padding-top:.1rem}
+.day{align-items:center}
+.day .d{flex:0 0 48px;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--green);font-weight:600}
+.dthumb{flex:0 0 auto;width:64px;height:64px;border-radius:11px;object-fit:cover;border:1px solid var(--border)}
 .day .body{flex:1}
 .day .dh{font-weight:700;font-size:.92rem;margin-bottom:.15rem}
 .day .dd{font-size:.84rem;color:var(--text-dim)}
@@ -432,6 +434,16 @@ function onScroll(){
 }
 document.addEventListener('scroll',onScroll,{passive:true});
 onScroll();
+
+// per-day landmark thumbnails (document order matches the files)
+const DAYIMGS=['rio-1','rio-2','rio-3','rio-4','ilha-1','ilha-2','ilha-3','iguacu-1','iguacu-2','amazon-1','amazon-2','amazon-3','amazon-4','sp-1','sp-2','sp-3','sp-4','sp-5'];
+document.querySelectorAll('.day').forEach((d,i)=>{
+  if(!DAYIMGS[i])return;
+  const im=document.createElement('img');
+  im.className='dthumb';im.loading='lazy';im.alt='';
+  im.src='assets/img/days/'+DAYIMGS[i]+'.png';
+  d.insertBefore(im, d.querySelector('.body'));
+});
 </script>
 </body>
 </html>

@@ -145,6 +145,27 @@ textarea:focus{border-color:var(--green)}
 .fallback textarea{margin-top:.8rem}
 .hint{font-size:.74rem;color:var(--text-dim);line-height:1.5;margin:.4rem 0 1rem}
 a{color:var(--green)}
+/* ===== Squad Verdict poster ===== */
+.verdict-actions{display:flex;gap:.6rem;margin:1rem 0}
+#verdictWrap{margin-top:1.4rem}
+.poster{background:linear-gradient(170deg,#0c1411,#0a0f0d 60%);border:1px solid var(--border);border-radius:18px;padding:1.4rem 1.2rem;max-width:520px;margin:0 auto}
+.poster-hd{text-align:center;border-bottom:1px solid var(--border);padding-bottom:1rem;margin-bottom:1rem}
+.poster-hd .flag{font-size:2.4rem}
+.poster-hd h2{font-family:'Playfair Display',serif;font-weight:900;font-size:1.9rem;line-height:1;letter-spacing:-1px;color:var(--green-bright);margin:.3rem 0}
+.poster-hd .meta{font-family:'JetBrains Mono',monospace;font-size:.66rem;color:var(--text-dim);letter-spacing:1px}
+.poster-sec{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);margin:1.1rem 0 .5rem;border-left:2px solid var(--green);padding-left:.5rem}
+.v-item{margin-bottom:.9rem}
+.v-q{font-size:.84rem;font-weight:600;color:var(--text);margin-bottom:.35rem}
+.v-chosen{display:flex;gap:.5rem;align-items:flex-start;background:var(--green-dim);border:1px solid #00d47b44;border-radius:10px;padding:.5rem .65rem}
+.v-chosen .tick{color:var(--green);font-weight:900;flex:0 0 auto}
+.v-chosen .ct{flex:1}
+.v-chosen .clabel{font-weight:700;font-size:.86rem;color:var(--green-bright);line-height:1.25}
+.v-chosen .cvote{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--green);opacity:.8}
+.v-chosen.split{background:#ff8c4218;border-color:#ff8c4244}
+.v-chosen.split .tick,.v-chosen.split .clabel{color:var(--orange)}
+.v-missed{margin:.4rem 0 0 .3rem;padding-left:.6rem;border-left:1px dashed var(--border)}
+.v-missed .ml{font-size:.76rem;color:var(--text-dim);text-decoration:line-through;text-decoration-color:#5a6b5e;line-height:1.5;opacity:.7}
+.poster-ft{text-align:center;border-top:1px solid var(--border);margin-top:1.1rem;padding-top:.9rem;font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--text-dim)}
 </style>
 </head>
 <body>
@@ -226,6 +247,11 @@ a{color:var(--green)}
 
     <div id="tallyOut" style="margin-top:1.2rem"></div>
 
+    <div class="verdict-actions" id="verdictActions" style="display:none">
+      <button class="btn primary" onclick="buildVerdict()">📸 Squad Verdict — chosen vs missed</button>
+    </div>
+    <div id="verdictWrap"></div>
+
     <!-- Manual fallback (shown when live sync is unavailable, e.g. on GitHub Pages) -->
     <details id="pasteFallback" class="fallback">
       <summary>Paste share codes manually</summary>
@@ -238,6 +264,7 @@ a{color:var(--green)}
 </div>
 <div class="toast" id="toast"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 const QUIZ = [
 {"id":"rio-saturday-shape","section":"Rio de Janeiro","question":"How do we build the Saturday around the Maracanã match?","type":"single","emoji":"⚽","options":[{"label":"Keep the full order (beach → Museu do Amanhã → food tour → Maracanã)","detail":"See everything, but it's a rushed day and risks a tired, late steak dinner."},{"label":"Drop Museu do Amanhã, longer beach + food tour","detail":"Cuts the one museum stop the group is lukewarm on; more chill before the match."},{"label":"Match-first day: pre-game bar build-up + Maracanã, steak after","detail":"Maximises the football and the night out; sacrifices most daytime sightseeing."},{"label":"Beach morning only, save energy for match + steak + Lapa","detail":"Lowest-effort daytime so everyone's fresh to go big at night."}],"why":"Sept 19 is overloaded and stacks a museum the group doesn't love; the real fork is what to cut so the football and steak night land."},
@@ -424,7 +451,71 @@ function runTally(){
   const people=raw.map(decode).filter(Boolean);
   renderTally(people);
 }
+
+/* ---------- Squad Verdict poster: chosen vs missed ---------- */
+function tallyOne(q,people){
+  const counts=q.options.map(()=>0);let total=0;
+  people.forEach(p=>{const a=p.ans[q.id];if(a==null)return;const arr=Array.isArray(a)?a:[a];
+    arr.forEach(i=>{if(counts[i]!=null)counts[i]++;});total++;});
+  return {counts,total};
+}
+function buildVerdict(){
+  const people=lastPeople;
+  if(!people.length){toast('No votes yet');return;}
+  const bySec={};
+  QUIZ.forEach(q=>{(bySec[q.section]=bySec[q.section]||[]).push(q);});
+  let html=`<div class="poster" id="posterCard">
+    <div class="poster-hd"><div class="flag">🇧🇷</div><h2>The Squad Verdict</h2>
+      <div class="meta">BRAZIL · SEPT 17 – OCT 4 2026 · ${people.length} VOTED: ${people.map(p=>p.name).join(', ').toUpperCase()}</div></div>`;
+  for(const sec in bySec){
+    html+=`<div class="poster-sec">${sec}</div>`;
+    bySec[sec].forEach(q=>{
+      const {counts,total}=tallyOne(q,people);
+      if(!total)return;
+      const max=Math.max(...counts);
+      const winners=counts.map((c,i)=>({c,i})).filter(o=>o.c===max&&o.c>0);
+      const tie=q.type==='single'&&winners.length>1;
+      // chosen = winner(s); for multi, every option with majority (> half)
+      let chosenIdx, missedIdx;
+      if(q.type==='multi'){
+        chosenIdx=counts.map((c,i)=>({c,i})).filter(o=>o.c>total/2).map(o=>o.i);
+        if(!chosenIdx.length)chosenIdx=winners.map(w=>w.i);
+      }else{
+        chosenIdx=winners.map(w=>w.i);
+      }
+      missedIdx=q.options.map((_,i)=>i).filter(i=>!chosenIdx.includes(i));
+      html+=`<div class="v-item"><div class="v-q">${q.emoji} ${q.question}</div>`;
+      chosenIdx.forEach(i=>{
+        html+=`<div class="v-chosen ${tie?'split':''}"><span class="tick">${tie?'⚖':'✓'}</span>
+          <span class="ct"><span class="clabel">${q.options[i].label}</span>
+          <span class="cvote"> · ${counts[i]}/${total}${tie?' (split — decide IRL)':''}</span></span></div>`;
+      });
+      if(missedIdx.length){
+        html+=`<div class="v-missed">`+missedIdx.map(i=>`<div class="ml">${q.options[i].label}${counts[i]?` (${counts[i]})`:''}</div>`).join('')+`</div>`;
+      }
+      html+=`</div>`;
+    });
+  }
+  html+=`<div class="poster-ft">✓ chosen   ·   ~~missed~~ the road not taken   ·   brazil-quiz.m7md-7amdi.workers.dev</div></div>
+    <div class="verdict-actions"><button class="btn primary" onclick="downloadVerdict()">⬇️ Download as image</button>
+    <button class="btn ghost" onclick="$('verdictWrap').innerHTML='';$('verdictActions').scrollIntoView()">✕ Close</button></div>`;
+  $('verdictWrap').innerHTML=html;
+  $('verdictWrap').scrollIntoView({behavior:'smooth',block:'start'});
+}
+async function downloadVerdict(){
+  const card=$('posterCard');if(!card){toast('Build it first');return;}
+  if(typeof html2canvas!=='function'){toast('Image lib still loading…');return;}
+  toast('Rendering poster…');
+  try{
+    const canvas=await html2canvas(card,{backgroundColor:'#0a0f0d',scale:2,useCORS:true});
+    const a=document.createElement('a');a.download='brazil-squad-verdict.png';
+    a.href=canvas.toDataURL('image/png');a.click();
+    toast('Saved! 📸');
+  }catch(e){toast('Render failed — screenshot instead');}
+}
+let lastPeople=[];
 function renderTally(people){
+  lastPeople=people; const va=$('verdictActions'); if(va)va.style.display=people.length?'flex':'none';
   const out=$('tallyOut');
   if(!people.length){out.innerHTML='<div class="empty">No votes yet ☝️<br><br>Each person opens this page, finishes the quiz, and their answers appear here automatically.</div>';return;}
   let html=`<div class="hint"><b>${people.length}</b> ${people.length===1?'person':'people'}: ${people.map(p=>p.name).join(', ')}</div>`;
