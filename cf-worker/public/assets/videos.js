@@ -9,15 +9,24 @@
     'amazon-1':'vwS76LVPvLY','amazon-2':'skB1beVlowU','amazon-3':'fO-VlxcyFv4','amazon-4':'MEvoCxrq-nY',
     'sp-1':'phPgZC9_QhQ','sp-2':'yu0PHOC6svM','sp-3':'gTC6ZUY3gdg','sp-4':'hG2JE98UwGY','sp-5':'m2KK8Oq6koo'
   };
-  // per decision-option footage (key = "<questionId>-<optIndex>") — clips of that exact activity
+  // per decision-option footage (key = "<questionId>-<optIndex>") — verified clip of that exact option
   const OPTVIDS={
-    'lopes-mendes-vs-boat-0':'SiURNfawaRA', // Lopes Mendes hike
-    'lopes-mendes-vs-boat-1':'MgXxUp0khYc', // Lagoa Azul boat tour
-    'iguazu-which-sides-0':'N0zk5YC3hl4',   // Argentine side / Devil's Throat
-    'activity-intensity-0':'skB1beVlowU',   // night caiman spotting
-    'activity-intensity-1':'fO-VlxcyFv4',   // piranha / pink dolphin Amazon
-    'sp-friday-nightlife-2':'gTC6ZUY3gdg',  // Vila Madalena
-    'biggest-splurge-1':'QF2O2HTeQWY'       // Maracanã match
+    'rio-steakhouse-0':'8hNZBCZhWT8','rio-steakhouse-1':'O8vWbCb2c9E','rio-steakhouse-2':'wvZPjU46XRk',
+    'rio-adrenaline-addon-0':'vtlUu09glpQ','rio-adrenaline-addon-1':'Bzf9PetqAuE','rio-adrenaline-addon-2':'gPOuOyuWGrE',
+    'rio-last-night-0':'Y9sfcSqXP6s','rio-last-night-1':'LdcT3sKeSzk','rio-last-night-2':'mpQJHsJ6hcU',
+    'lopes-mendes-vs-boat-0':'xhk7_thz7Ws','lopes-mendes-vs-boat-1':'MgXxUp0khYc','lopes-mendes-vs-boat-2':'vHhEyOmaR5c','lopes-mendes-vs-boat-3':'vdvQ-FNfytw',
+    'pousada-style-0':'D1qcMHlbGrk','pousada-style-1':'ihoAdiJxON0','pousada-style-2':'MxijVE2UVv8',
+    'party-vs-detox-0':'ajq3BnuxNR0','party-vs-detox-1':'cz0WfSnExMs','party-vs-detox-2':'mdW_3Qi2_Jo',
+    'iguazu-which-sides-0':'N0zk5YC3hl4','iguazu-which-sides-1':'3-kPCZ0UVPA','iguazu-which-sides-2':'aXzpWE4pvWs',
+    'iguazu-adrenaline-0':'It7qGdZXdtc','iguazu-adrenaline-1':'OOUhTZCTqRk','iguazu-adrenaline-2':'5ASxLwy1du8',
+    'lodge-vs-manaus-base-0':'1BLMxcgy0aY','lodge-vs-manaus-base-1':'iJvPeHx7N4Q','lodge-vs-manaus-base-2':'T3iKj-wKGJs',
+    'lodge-tier-0':'Nn1ZrSDzkpc','lodge-tier-1':'B-aG5aia1E0','lodge-tier-2':'f7As0yBCppU',
+    'activity-intensity-0':'skB1beVlowU','activity-intensity-1':'kQ0mmXFXZbE','activity-intensity-2':'79biDX8kPNs','activity-intensity-3':'TSZs-Q4_kTU',
+    'sp-football-match-0':'12AHse4j0CY','sp-football-match-1':'DeSBZP9LZCk','sp-football-match-2':'h-BS11Awld8',
+    'sp-friday-nightlife-0':'0zzTZ975VuM','sp-friday-nightlife-1':'bf3DbvbZv_s','sp-friday-nightlife-2':'ulg9oN2KLj0','sp-friday-nightlife-3':'KZD10We9JNU',
+    'sp-daytrip-vs-city-0':'yPKmgkgKRQI','sp-daytrip-vs-city-1':'ZHuviR3r2eA','sp-daytrip-vs-city-2':'inSd8eL6Ot0',
+    'sp-finale-night-0':'ZIkUS5F_lMQ','sp-finale-night-1':'OAkVET7xrfk',
+    'biggest-splurge-0':'Ggs7qr3PjpE','biggest-splurge-1':'QF2O2HTeQWY','biggest-splurge-2':'5aq_Y7z9288'
   };
   window.VIDS={DAYVIDS,OPTVIDS};
 
