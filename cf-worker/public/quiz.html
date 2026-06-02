@@ -166,6 +166,33 @@ a{color:var(--green)}
 .v-missed{margin:.4rem 0 0 .3rem;padding-left:.6rem;border-left:1px dashed var(--border)}
 .v-missed .ml{font-size:.76rem;color:var(--text-dim);text-decoration:line-through;text-decoration-color:#5a6b5e;line-height:1.5;opacity:.7}
 .poster-ft{text-align:center;border-top:1px solid var(--border);margin-top:1.1rem;padding-top:.9rem;font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--text-dim)}
+
+/* ===== decide popup (bottom sheet) ===== */
+.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(3px);z-index:300;opacity:0;pointer-events:none;transition:.25s}
+.sheet-bg.show{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:301;background:var(--bg);border-top:1px solid var(--border);
+  border-radius:20px 20px 0 0;max-height:93dvh;overflow-y:auto;transform:translateY(101%);
+  transition:transform .32s cubic-bezier(.2,.7,.2,1);padding:.7rem 1rem calc(1.4rem + env(safe-area-inset-bottom))}
+.sheet.show{transform:translateY(0)}
+.sheet-grab{width:42px;height:4px;background:var(--border);border-radius:99px;margin:.3rem auto .9rem}
+.sheet-q{font-family:'Playfair Display',serif;font-weight:700;font-size:1.3rem;line-height:1.2;margin-bottom:.2rem}
+.sheet-hint{font-size:.76rem;color:var(--text-dim);margin-bottom:1rem}
+.ocard{background:var(--card);border:1.5px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:.9rem}
+.ocard.sel{border-color:var(--green);box-shadow:0 0 0 3px var(--green-dim)}
+.ocard .imgwrap{position:relative;height:172px;background:linear-gradient(135deg,#18241d,#0c1411);display:flex;align-items:center;justify-content:center}
+.ocard .imgwrap img{width:100%;height:100%;object-fit:cover}
+.ocard .imgwrap .ph{font-size:3.2rem;opacity:.55}
+.ocard .imgwrap .badge{position:absolute;top:.5rem;left:.5rem;font-family:'JetBrains Mono',monospace;font-size:.58rem;
+  background:rgba(10,15,13,.7);backdrop-filter:blur(6px);border:1px solid var(--border);color:var(--text-dim);padding:.15rem .5rem;border-radius:99px}
+.ocard .imgwrap .selflag{position:absolute;top:.5rem;right:.5rem;background:var(--green);color:#04140c;font-weight:800;font-size:.7rem;padding:.2rem .55rem;border-radius:99px;display:none}
+.ocard.sel .imgwrap .selflag{display:block}
+.ocard .ob{padding:.85rem .95rem}
+.ocard .ol{font-weight:700;font-size:1.02rem;line-height:1.2}
+.ocard .od{color:var(--text-dim);font-size:.85rem;margin-top:.3rem;line-height:1.5}
+.ocard .pickbtn{margin-top:.8rem;width:100%;padding:.8rem;border-radius:11px;border:1px solid var(--border);
+  background:transparent;color:var(--text);font-family:inherit;font-weight:700;font-size:.9rem;cursor:pointer;transition:.15s}
+.ocard.sel .pickbtn{background:var(--green);color:#04140c;border-color:var(--green)}
+.sheet-done{position:sticky;bottom:0;margin-top:.4rem}
 </style>
 </head>
 <body>
@@ -264,7 +291,16 @@ a{color:var(--green)}
 </div>
 <div class="toast" id="toast"></div>
 
+<div class="sheet-bg" id="sheetBg" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet">
+  <div class="sheet-grab"></div>
+  <div class="sheet-q" id="sheetQ"></div>
+  <div class="sheet-hint" id="sheetHint"></div>
+  <div id="sheetOpts"></div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="assets/terms.js"></script>
 <script>
 const QUIZ = [
 {"id":"rio-saturday-shape","section":"Rio de Janeiro","question":"How do we build the Saturday around the Maracanã match?","type":"single","emoji":"⚽","options":[{"label":"Keep the full order (beach → Museu do Amanhã → food tour → Maracanã)","detail":"See everything, but it's a rushed day and risks a tired, late steak dinner."},{"label":"Drop Museu do Amanhã, longer beach + food tour","detail":"Cuts the one museum stop the group is lukewarm on; more chill before the match."},{"label":"Match-first day: pre-game bar build-up + Maracanã, steak after","detail":"Maximises the football and the night out; sacrifices most daytime sightseeing."},{"label":"Beach morning only, save energy for match + steak + Lapa","detail":"Lowest-effort daytime so everyone's fresh to go big at night."}],"why":"Sept 19 is overloaded and stacks a museum the group doesn't love; the real fork is what to cut so the football and steak night land."},
@@ -353,6 +389,7 @@ function render(){
             <div class="otext"><div class="olabel">${o.label}</div><div class="odetail">${o.detail}</div></div>
           </div>`).join('')}
       </div>
+      <button class="btn ghost" style="margin-top:.9rem" onclick="openCompare()">🔍 See photos &amp; help me decide</button>
       <div class="why">${q.why}</div>
       <div class="navrow">
         ${state.idx>0?'<button class="btn ghost" onclick="prev()">← Back</button>':''}
@@ -360,6 +397,7 @@ function render(){
       </div>
     </div>`;
   updateNext();
+  window.walkTerms&&walkTerms($('qmount'));
 }
 function answered(){const q=QUIZ[state.idx];const c=state.answers[q.id];return q.type==='multi'?Array.isArray(c)&&c.length>0:c!=null;}
 function updateNext(){const b=$('nextBtn');if(b)b.disabled=!answered();}
@@ -382,6 +420,47 @@ function pick(i){
 function next(){if(!answered())return;if(state.idx<QUIZ.length-1){state.idx++;save();render();}else{finish();}}
 function prev(){if(state.idx>0){state.idx--;save();render();}}
 
+/* ---------- decide popup ---------- */
+function openCompare(){
+  const q=QUIZ[state.idx];
+  $('sheetQ').innerHTML=q.emoji+' '+q.question;
+  $('sheetHint').textContent=q.type==='multi'?'Tap every option you want — photos to help you choose.':'Photos of each option. Tap “Pick this” to choose.';
+  renderSheetOpts();
+  $('sheetBg').classList.add('show');$('sheet').classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function closeSheet(){$('sheetBg').classList.remove('show');$('sheet').classList.remove('show');document.body.style.overflow='';}
+function renderSheetOpts(){
+  const q=QUIZ[state.idx];const cur=state.answers[q.id];
+  const sel=i=> q.type==='multi' ? (Array.isArray(cur)&&cur.includes(i)) : cur===i;
+  $('sheetOpts').innerHTML=q.options.map((o,i)=>`
+    <div class="ocard ${sel(i)?'sel':''}" id="oc${i}">
+      <div class="imgwrap">
+        <span class="ph">${q.emoji}</span>
+        <img loading="lazy" src="assets/img/options/${q.id}-${i}.jpg" alt=""
+             onload="this.style.opacity=1" onerror="this.remove()" style="opacity:0;transition:.3s">
+        <span class="badge">Option ${i+1}</span><span class="selflag">✓ Picked</span>
+      </div>
+      <div class="ob">
+        <div class="ol">${o.label}</div>
+        <div class="od">${o.detail}</div>
+        <button class="pickbtn" onclick="pickFromSheet(${i})">${sel(i)?(q.type==='multi'?'✓ Selected — tap to remove':'✓ Picked'):(q.type==='multi'?'+ Add this':'Pick this')}</button>
+      </div>
+    </div>`).join('');
+  window.walkTerms&&walkTerms($('sheetOpts'));
+}
+function pickFromSheet(i){
+  const q=QUIZ[state.idx];
+  if(q.type==='multi'){
+    let c=Array.isArray(state.answers[q.id])?state.answers[q.id].slice():[];
+    const k=c.indexOf(i);if(k>=0)c.splice(k,1);else c.push(i);c.sort((a,b)=>a-b);
+    state.answers[q.id]=c;save();renderSheetOpts();render();
+  }else{
+    state.answers[q.id]=i;save();renderSheetOpts();
+    setTimeout(()=>{closeSheet();state.idx===QUIZ.length-1?finish():next();},260);
+  }
+}
+
 /* ---------- encode / decode ---------- */
 function encode(){
   const parts=QUIZ.map(q=>{const a=state.answers[q.id];if(a==null)return '';return Array.isArray(a)?a.join('.'):String(a);});
@@ -402,6 +481,7 @@ function finish(){
   $('resList').innerHTML=QUIZ.map(q=>{const a=state.answers[q.id];if(a==null)return '';
     const txt=Array.isArray(a)?a.map(i=>q.options[i].label).join(' · '):q.options[a].label;
     return `<div class="result-card"><div class="rc-q">${q.emoji} ${q.question}</div><div class="rc-a">→ ${txt}</div></div>`;}).join('');
+  window.walkTerms&&walkTerms($('resList'));
   save();show('screen-result');
   syncVote();
 }
@@ -545,6 +625,7 @@ function renderTally(people){
     html+=`</div>`;
   });
   out.innerHTML=html;
+  window.walkTerms&&walkTerms(out);
 }
 
 /* ---------- boot ---------- */
