@@ -417,6 +417,7 @@ h2.title{font-family:'Playfair Display',serif;font-weight:700;font-size:1.7rem;l
 
 </div>
 
+<script src="assets/videos.js"></script>
 <script>
 // scroll progress + active nav
 const pbar=document.getElementById('pbar');
@@ -439,10 +440,27 @@ onScroll();
 const DAYIMGS=['rio-1','rio-2','rio-3','rio-4','ilha-1','ilha-2','ilha-3','iguacu-1','iguacu-2','amazon-1','amazon-2','amazon-3','amazon-4','sp-1','sp-2','sp-3','sp-4','sp-5'];
 document.querySelectorAll('.day').forEach((d,i)=>{
   if(!DAYIMGS[i])return;
+  const vid=window.VIDS&&VIDS.DAYVIDS[DAYIMGS[i]];
   const im=document.createElement('img');
   im.className='dthumb';im.loading='lazy';im.alt='';
   im.src='assets/img/days/'+DAYIMGS[i]+'.png';
-  d.insertBefore(im, d.querySelector('.body'));
+  if(vid){
+    const wrap=document.createElement('div');
+    wrap.style.cssText='position:relative;flex:0 0 auto';
+    wrap.appendChild(im);
+    const play=document.createElement('div');play.className='vplay';play.title='Watch footage';
+    play.innerHTML='<i></i>';
+    play.onclick=()=>playVid(vid);
+    wrap.appendChild(play);
+    d.insertBefore(wrap, d.querySelector('.body'));
+    // also a small "watch footage" chip under the activity text
+    const chip=document.createElement('span');chip.className='vidchip';chip.textContent='Watch footage';
+    chip.style.marginTop='.5rem';chip.style.display='inline-flex';
+    chip.onclick=()=>playVid(vid);
+    d.querySelector('.body').appendChild(chip);
+  }else{
+    d.insertBefore(im, d.querySelector('.body'));
+  }
 });
 </script>
 <script src="assets/terms.js"></script>

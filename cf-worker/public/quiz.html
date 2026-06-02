@@ -300,6 +300,7 @@ a{color:var(--green)}
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="assets/videos.js"></script>
 <script src="assets/terms.js"></script>
 <script>
 const QUIZ = [
@@ -444,6 +445,7 @@ function renderSheetOpts(){
       <div class="ob">
         <div class="ol">${o.label}</div>
         <div class="od">${o.detail}</div>
+        ${(window.VIDS&&VIDS.OPTVIDS[q.id+'-'+i])?`<span class="vidchip" style="margin-top:.6rem" onclick="playVid('${VIDS.OPTVIDS[q.id+'-'+i]}')">Watch footage</span>`:''}
         <button class="pickbtn" onclick="pickFromSheet(${i})">${sel(i)?(q.type==='multi'?'✓ Selected — tap to remove':'✓ Picked'):(q.type==='multi'?'+ Add this':'Pick this')}</button>
       </div>
     </div>`).join('');
