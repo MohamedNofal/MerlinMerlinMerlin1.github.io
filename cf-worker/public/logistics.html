@@ -6,6 +6,8 @@
 <meta name="theme-color" content="#0a0f0d">
 <title>Brazil 2026 · Logistics</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{--bg:#0a0f0d;--card:#111916;--card2:#162019;--green:#00d47b;--green-dim:#00d47b22;--green-bright:#3affa0;
@@ -124,6 +126,10 @@ ul.mini li b{color:var(--green-bright)}
 
 <div class="wrap">
 
+  <h2 class="sec">🗺️ The places</h2>
+  <div class="sec-sub">Green = the main route (in order). Orange = alternatives. Tap a pin to jump to that leg.</div>
+  <div id="placemap" style="height:360px;border-radius:16px;border:1px solid var(--border);margin-bottom:.5rem"></div>
+
   <h2 class="sec">🛣️ The main route</h2>
   <div class="sec-sub">Rio → Ilha Grande → Iguaçu → Amazon → São Paulo</div>
   <div class="timeline" id="core"></div>
@@ -146,6 +152,7 @@ ul.mini li b{color:var(--green-bright)}
 </div>
 
 <script src="assets/logi-data.js"></script>
+<script src="assets/map.js"></script>
 <script src="assets/videos.js"></script>
 <script src="assets/terms.js"></script>
 <script>
@@ -175,7 +182,7 @@ function connCard(c){
   const segDetail=segs.map(s=>`<div class="seg"><b>${icon(s.mode)} ${esc(s.from||'')}${s.from&&s.to?' → ':''}${esc(s.to||'')}</b><div class="det">${esc(s.detail||'')}${s.tip?' • 💡 '+esc(s.tip):''}</div></div>`).join('');
   const tips=(c.tips||[]).length?`<div class="lst tips"><div class="h">Booking tips</div><ul>${c.tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>`:'';
   const got=(c.gotchas||[]).length?`<div class="lst got"><div class="h">Watch out</div><ul>${c.gotchas.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>`:'';
-  return `<details class="conn">
+  return `<details class="conn" id="conn-${c.key}">
     <summary>
       <div class="ch"><span class="cn">${esc(SHORT[c.key]||c.title||c.key)}</span><span class="ar">▼</span></div>
       <div class="strip"><span class="modes">${modeStrip(segs)}</span>
@@ -260,6 +267,15 @@ if(ov.money){const m=ov.money;
     ${m.tipping?`<div class="row"><b>Tipping:</b> ${esc(m.tipping)}</div>`:''}
     ${m.transferApps?`<div class="row"><b>Apps:</b> ${esc(m.transferApps)}</div>`:''}</div></details>`;}
 $('overview').innerHTML=oh;
+
+// interactive map
+const PLACE2CONN={rio:'arrival-rio','ilha-grande':'rio-ilha',iguacu:'ilha-foz',manaus:'foz-manaus',saopaulo:'manaus-sp',
+  paraty:'rio-paraty',buzios:'rio-buzios',arraial:'rio-arraial',chapada:'reach-chapada',lencois:'reach-lencois',bonito:'reach-bonito',pantanal:'reach-pantanal',salvador:'reach-salvador'};
+if(window.makeMap) makeMap('placemap',{
+  route:['rio','ilha-grande','iguacu','manaus','saopaulo'],
+  alts:['paraty','buzios','arraial','chapada','lencois','bonito','pantanal','salvador'],
+  onClick:id=>{const k=PLACE2CONN[id];const el=k&&document.getElementById('conn-'+k);if(el){el.open=true;el.scrollIntoView({behavior:'smooth',block:'center'});}}
+});
 
 window.walkTerms&&walkTerms(document.body);
 </script>

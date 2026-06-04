@@ -6,6 +6,8 @@
 <meta name="theme-color" content="#0a0f0d">
 <title>Brazil 2026 · Agree the Route</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{--bg:#0a0f0d;--card:#111916;--card2:#162019;--green:#00d47b;--green-dim:#00d47b22;--green-bright:#3affa0;
@@ -148,6 +150,10 @@ h2.sec{font-family:'Playfair Display',serif;font-weight:700;font-size:1.5rem;mar
   <div class="sec-sub">Tap one to load it, then tweak any leg below. Alex's is the suggested baseline.</div>
   <div class="presets" id="presets"></div>
 
+  <h2 class="sec" style="font-family:'Playfair Display',serif;font-weight:700;font-size:1.4rem;margin:1.8rem 0 .2rem">🗺️ Your route, mapped</h2>
+  <div class="sec-sub">Updates live as you choose. Green pins = your cities, in order.</div>
+  <div id="routemap" style="height:300px;border-radius:16px;border:1px solid var(--border);margin-bottom:.5rem"></div>
+
   <div id="parts"></div>
 
   <div class="cta">
@@ -178,6 +184,7 @@ h2.sec{font-family:'Playfair Display',serif;font-weight:700;font-size:1.5rem;mar
 <div class="toast" id="toast"></div>
 
 <script src="assets/route-data.js"></script>
+<script src="assets/map.js"></script>
 <script src="assets/videos.js"></script>
 <script src="assets/terms.js"></script>
 <script>
@@ -253,7 +260,21 @@ function renderParts(){
 }
 function tg(id,el){const b=$(id);b.classList.toggle('open');el.textContent=b.classList.contains('open')?'Read less ▴':'Read more ▾';}
 function pick(pk,ak){st.picks[pk]=ak;save();renderAll();autoSync();}
-function renderAll(){renderPresets();renderParts();updateBar();}
+const ALT2PLACE={'rio-4':'rio','rio-3':'rio','rio-5':'rio','rio-daytrip':'rio',
+ 'escape-ilha':'ilha-grande','escape-paraty':'paraty','escape-buzios':'buzios','escape-arraial':'arraial',
+ 'wonder-iguacu':'iguacu','wonder-chapada':'chapada','wonder-lencois':'lencois','wonder-bonito':'bonito',
+ 'adv-amazon':'manaus','adv-pantanal':'pantanal','adv-salvador':'salvador','adv-skip':null,
+ 'sp-4':'saopaulo','sp-foodie':'saopaulo','sp-party':'saopaulo','sp-daytrip':'saopaulo'};
+let rmap=null;
+function updateMap(){
+  if(!window.makeMap)return;
+  const ids=['rio','escape','wonder','adventure','sp'].map(pk=>ALT2PLACE[st.picks[pk]]).filter(Boolean);
+  const partOfPlace={}; // place -> part key, to scroll on click
+  Object.keys(st.picks).forEach(pk=>{const pl=ALT2PLACE[st.picks[pk]];if(pl)partOfPlace[pl]=pk;});
+  const onClick=id=>{const pk=partOfPlace[id];const el=pk&&document.querySelector('.part .pt');};
+  if(!rmap){rmap=makeMap('routemap',{route:ids});}else{rmap.render(ids,[]);}
+}
+function renderAll(){renderPresets();renderParts();updateBar();updateMap();}
 
 /* ---------- summary bar ---------- */
 function updateBar(){
