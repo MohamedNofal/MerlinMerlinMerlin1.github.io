@@ -105,6 +105,8 @@ h2.sec{font-family:'Playfair Display',serif;font-weight:700;font-size:1.5rem;mar
 .cta a{display:inline-block;margin-top:.3rem;color:var(--green);font-weight:700;text-decoration:none}
 .nav{display:flex;gap:.5rem;justify-content:center;margin:1rem 0 0;font-size:.8rem}
 .nav a{color:var(--text-dim);text-decoration:none;border:1px solid var(--border);border-radius:99px;padding:.3rem .8rem}
+.next{font-size:.84rem;color:var(--green-bright);margin:1rem 0 .2rem;line-height:1.5}
+.tagline{text-align:center;font-family:'JetBrains Mono',monospace;font-size:.64rem;color:var(--text-dim);letter-spacing:1px;margin:1.6rem 0 .5rem;text-transform:uppercase}
 
 /* group sheet */
 .bg{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:300;opacity:0;pointer-events:none;transition:.25s}
@@ -132,7 +134,7 @@ h2.sec{font-family:'Playfair Display',serif;font-weight:700;font-size:1.5rem;mar
 <div class="hero">
   <span class="flag">🇧🇷</span>
   <h1>Agree the route</h1>
-  <p>Flights are booked — we land in Rio and fly home from São Paulo. Everything in between is up for grabs. Pick the cities together first; fine-tune the details later.</p>
+  <p>Flights are locked — we touch down in Rio, fly home from São Paulo. Everything in between is ours to argue over. Pin the cities together first, sweat the details later.</p>
   <div class="fixed-note">
     <span>✈️ IN · <b>Rio · Sep 17</b></span>
     <span>🏁 18 nights</span>
@@ -143,11 +145,11 @@ h2.sec{font-family:'Playfair Display',serif;font-weight:700;font-size:1.5rem;mar
 <div class="wrap">
 
   <h2 class="sec">🌳 The big call: Amazon… or not?</h2>
-  <div class="sec-sub">This one reshapes the whole trip — decide it first.</div>
+  <div class="sec-sub">This one bends the whole trip — call it before anything else.</div>
   <div id="forkBox"></div>
 
   <h2 class="sec">⚡ Quick-start routes</h2>
-  <div class="sec-sub">Tap one to load it, then tweak any leg below. Alex's is the suggested baseline.</div>
+  <div class="sec-sub">Tap one to load it, then nudge any leg below. Alex's is the baseline we'd start from.</div>
   <div class="presets" id="presets"></div>
 
   <h2 class="sec" style="font-family:'Playfair Display',serif;font-weight:700;font-size:1.4rem;margin:1.8rem 0 .2rem">🗺️ Your route, mapped</h2>
@@ -158,10 +160,12 @@ h2.sec{font-family:'Playfair Display',serif;font-weight:700;font-size:1.5rem;mar
 
   <div class="cta">
     <div style="font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700">Cities locked in?</div>
-    <div style="color:var(--text-dim);font-size:.85rem;margin-top:.3rem">If you're going with Alex's plan, fill the gaps (steak, lodge, nights out…).</div>
+    <div style="color:var(--text-dim);font-size:.85rem;margin-top:.3rem">Rolling with Alex's plan? Fill the gaps — the steak, the lodge, the nights out…</div>
     <a href="quiz.html">→ Open the gap quiz</a>
-    <div class="nav"><a href="guide.html">📖 Read the full guide</a> <a href="logistics.html">🧭 Logistics &amp; transport</a></div>
+    <div class="next">Next: feel out what each of these stops is actually like before you commit.</div>
+    <div class="nav"><a href="guide.html">📖 The guide</a> <a href="logistics.html">🧭 Logistics</a></div>
   </div>
+  <div class="tagline">Rio to Sampa · five mates · one plan we all agree on.</div>
 </div>
 
 <div class="routebar"><div class="inner">
@@ -184,6 +188,7 @@ h2.sec{font-family:'Playfair Display',serif;font-weight:700;font-size:1.5rem;mar
 <div class="toast" id="toast"></div>
 
 <script src="assets/route-data.js"></script>
+<script src="assets/map-arcs.js"></script>
 <script src="assets/map.js"></script>
 <script src="assets/videos.js"></script>
 <script src="assets/terms.js"></script>

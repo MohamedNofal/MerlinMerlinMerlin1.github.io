@@ -109,6 +109,8 @@ ul.mini li b{color:var(--green-bright)}
 .nav a:hover{color:var(--green);border-color:var(--green)}
 .note{font-size:.68rem;color:var(--text-dim);text-align:center;margin-top:1rem;line-height:1.5}
 .tools{text-align:center;font-size:.62rem;color:var(--text-dim);font-family:'JetBrains Mono',monospace;margin-top:.5rem}
+.next{text-align:center;font-size:.86rem;color:var(--green-bright);margin:1.5rem 0 .2rem;line-height:1.5}
+.tagline{text-align:center;font-family:'JetBrains Mono',monospace;font-size:.64rem;color:var(--text-dim);letter-spacing:1px;margin:.8rem 0 .3rem;text-transform:uppercase}
 </style>
 </head>
 <body>
@@ -116,7 +118,7 @@ ul.mini li b{color:var(--green-bright)}
 <div class="hero">
   <span class="flag">🧭</span>
   <h1>Getting around</h1>
-  <p>Every city hop at a glance — tap a leg for prices, footage and detail.</p>
+  <p>Every leg of the trip, end to end — tap one for prices, footage and the detail.</p>
   <div class="facts">
     <span>💷 <b>R$6.5 = £1</b></span>
     <span>✈️ Intl → <b>Rio GIG</b></span>
@@ -142,16 +144,19 @@ ul.mini li b{color:var(--green-bright)}
   <div class="sec-sub">Flights · buses · money. Tap to open.</div>
   <div id="overview"></div>
 
+  <div class="next">Route's locked, legs are sorted — last job: settle the hundred little calls, together and live.</div>
   <div class="nav">
+    <a href="quiz.html">✅ The gap quiz</a>
     <a href="route.html">🗺️ Route</a>
     <a href="guide.html">📖 Guide</a>
-    <a href="quiz.html">✅ Quiz</a>
   </div>
   <div class="note">Per-person estimates for Sept–Oct 2026 — reconfirm fares & boat times when booking.</div>
+  <div class="tagline">Rio to Sampa · five mates · one plan we all agree on.</div>
   <div class="tools">prices web-checked via codex · footage via jina</div>
 </div>
 
 <script src="assets/logi-data.js"></script>
+<script src="assets/map-arcs.js"></script>
 <script src="assets/map.js"></script>
 <script src="assets/videos.js"></script>
 <script src="assets/terms.js"></script>
@@ -271,10 +276,12 @@ $('overview').innerHTML=oh;
 // interactive map
 const PLACE2CONN={rio:'arrival-rio','ilha-grande':'rio-ilha',iguacu:'ilha-foz',manaus:'foz-manaus',saopaulo:'manaus-sp',
   paraty:'rio-paraty',buzios:'rio-buzios',arraial:'rio-arraial',chapada:'reach-chapada',lencois:'reach-lencois',bonito:'reach-bonito',pantanal:'reach-pantanal',salvador:'reach-salvador'};
+function jumpToLeg(k){const el=k&&document.getElementById('conn-'+k);if(el){el.open=true;el.scrollIntoView({behavior:'smooth',block:'center'});}}
 if(window.makeMap) makeMap('placemap',{
   route:['rio','ilha-grande','iguacu','manaus','saopaulo'],
   alts:['paraty','buzios','arraial','chapada','lencois','bonito','pantanal','salvador'],
-  onClick:id=>{const k=PLACE2CONN[id];const el=k&&document.getElementById('conn-'+k);if(el){el.open=true;el.scrollIntoView({behavior:'smooth',block:'center'});}}
+  onClick:id=>jumpToLeg(PLACE2CONN[id]),
+  onEdge:k=>jumpToLeg(k)
 });
 
 window.walkTerms&&walkTerms(document.body);
