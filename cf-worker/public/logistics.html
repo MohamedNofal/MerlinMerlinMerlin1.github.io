@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a0f0d">
+<title>Brazil 2026 · Logistics</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#0a0f0d;--card:#111916;--card2:#162019;--green:#00d47b;--green-dim:#00d47b22;--green-bright:#3affa0;
+--yellow:#ffd43b;--orange:#ff8c42;--blue:#4ecdc4;--pink:#ff6b9d;--text:#e8efe8;--text-dim:#88a08c;--border:#1e2b22}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.55;overflow-x:hidden;padding-bottom:3rem}
+.wrap{max-width:600px;margin:0 auto;padding:0 1rem}
+
+.hero{text-align:center;padding:2rem 1rem 1rem}
+.hero .flag{font-size:2.4rem}
+.hero h1{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(2rem,8vw,2.8rem);line-height:1.02;letter-spacing:-1px;
+  background:linear-gradient(135deg,var(--green),var(--blue));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin:.3rem 0}
+.hero p{color:var(--text-dim);font-size:.92rem;max-width:34ch;margin:.4rem auto 0}
+.facts{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:1rem}
+.facts span{font-family:'JetBrains Mono',monospace;font-size:.64rem;background:var(--card);border:1px solid var(--border);border-radius:99px;padding:.35rem .7rem;color:var(--text-dim)}
+.facts b{color:var(--green)}
+
+h2.sec{font-family:'Playfair Display',serif;font-weight:700;font-size:1.5rem;margin:2.2rem 0 .2rem}
+.sec-sub{color:var(--text-dim);font-size:.83rem;margin-bottom:1rem}
+
+.timeline{position:relative;margin-left:.4rem;padding-left:1.2rem;border-left:2px solid var(--border)}
+.conn{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:.8rem;overflow:hidden;position:relative}
+.conn::before{content:'';position:absolute;left:-1.55rem;top:1.05rem;width:11px;height:11px;border-radius:50%;background:var(--green);border:2px solid var(--bg)}
+.conn>summary{list-style:none;cursor:pointer;padding:.9rem 1rem;display:flex;flex-direction:column;gap:.45rem}
+.conn>summary::-webkit-details-marker{display:none}
+.conn .cn{font-weight:700;font-size:1rem;line-height:1.2;display:flex;align-items:center;justify-content:space-between;gap:.5rem}
+.conn .cn .ar{color:var(--text-dim);font-size:.8rem;transition:.2s}
+.conn[open] .cn .ar{transform:rotate(180deg)}
+.conn .meta{display:flex;gap:.4rem;flex-wrap:wrap}
+.conn .meta span{font-family:'JetBrains Mono',monospace;font-size:.64rem;padding:.2rem .5rem;border-radius:7px;background:var(--card2);color:var(--text-dim)}
+.conn .meta .t{color:var(--blue)}.conn .meta .c{color:var(--green-bright)}
+.cbody{padding:0 1rem 1rem;border-top:1px solid var(--border);margin-top:.2rem;padding-top:.8rem}
+
+.seg{display:flex;gap:.6rem;padding:.5rem 0;border-bottom:1px dashed var(--border)}
+.seg:last-child{border-bottom:none}
+.seg .ic{flex:0 0 auto;font-size:1.1rem;width:1.4rem;text-align:center}
+.seg .sb{flex:1}
+.seg .route{font-weight:600;font-size:.86rem}
+.seg .det{color:var(--text-dim);font-size:.79rem;margin-top:.15rem;line-height:1.45}
+.seg .sm{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.3rem}
+.seg .sm span{font-family:'JetBrains Mono',monospace;font-size:.6rem;background:var(--card2);border-radius:6px;padding:.12rem .45rem;color:var(--text-dim)}
+.seg .tip{font-size:.76rem;color:var(--yellow);margin-top:.3rem;line-height:1.4}
+.seg .tip::before{content:'💡 '}
+
+.rec{background:var(--green-dim);border:1px solid #00d47b44;border-radius:10px;padding:.6rem .75rem;font-size:.84rem;margin:.8rem 0 .2rem;line-height:1.45}
+.rec::before{content:'✅ Best for the group — ';font-weight:700;color:var(--green-bright)}
+.lst{margin-top:.7rem}
+.lst .h{font-size:.72rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:1px;margin-bottom:.3rem}
+.lst.tips .h{color:var(--yellow)}.lst.got .h{color:var(--orange)}
+.lst ul{list-style:none;display:flex;flex-direction:column;gap:.35rem}
+.lst li{font-size:.79rem;line-height:1.45;padding-left:1rem;position:relative;color:#cdd9ce}
+.lst.tips li::before{content:'›';position:absolute;left:0;color:var(--yellow)}
+.lst.got li::before{content:'⚠';position:absolute;left:0;color:var(--orange);font-size:.7rem}
+.freq{font-size:.76rem;color:var(--text-dim);margin-top:.7rem;line-height:1.45}
+.freq::before{content:'🗓 ';}
+
+.ov{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1rem;margin-bottom:.8rem}
+.ov h3{font-size:1rem;margin-bottom:.5rem}
+.ov .row{font-size:.83rem;margin:.35rem 0;line-height:1.5}
+.ov .row b{color:var(--green-bright)}
+.chips{display:flex;gap:.4rem;flex-wrap:wrap;margin:.3rem 0 .5rem}
+.chips span{font-family:'JetBrains Mono',monospace;font-size:.64rem;background:var(--card2);border:1px solid var(--border);border-radius:99px;padding:.2rem .55rem;color:var(--text-dim)}
+.ovtips{margin-top:.5rem;border-top:1px solid var(--border);padding-top:.5rem}
+.ovtips li{font-size:.78rem;color:#cdd9ce;list-style:none;padding-left:1rem;position:relative;margin:.25rem 0;line-height:1.4}
+.ovtips li::before{content:'›';position:absolute;left:0;color:var(--green)}
+
+.nav{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin:2.5rem 0 1rem}
+.nav a{color:var(--text-dim);text-decoration:none;border:1px solid var(--border);border-radius:99px;padding:.4rem .9rem;font-size:.82rem}
+.nav a:hover{color:var(--green);border-color:var(--green)}
+.note{font-size:.7rem;color:var(--text-dim);text-align:center;margin-top:1rem;line-height:1.5}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <span class="flag">🧭</span>
+  <h1>Getting around</h1>
+  <p>Exactly how you hop between every city — door to door, with times, costs and the traps to avoid.</p>
+  <div class="facts">
+    <span>💷 <b>~R$6.5 = £1</b></span>
+    <span>✈️ Intl → <b>Rio GIG</b></span>
+    <span>🛫 Domestic: <b>GOL · LATAM · Azul</b></span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <h2 class="sec">🛣️ The main route, leg by leg</h2>
+  <div class="sec-sub">Alex's plan order: Rio → Ilha Grande → Iguaçu → Amazon → São Paulo. Tap a leg for full detail.</div>
+  <div class="timeline" id="core"></div>
+
+  <h2 class="sec">🔀 If you swap a city (alternatives)</h2>
+  <div class="sec-sub">How to reach each alternative destination.</div>
+  <div class="timeline" id="alt"></div>
+
+  <h2 class="sec">📋 Know-before-you-go</h2>
+  <div class="sec-sub">Flights, buses and money — the stuff that applies everywhere.</div>
+  <div id="overview"></div>
+
+  <div class="nav">
+    <a href="route.html">🗺️ Agree the route</a>
+    <a href="guide.html">📖 The guide</a>
+    <a href="quiz.html">✅ Gap quiz</a>
+  </div>
+  <div class="note">Costs are rough per-person estimates for planning (Sept–Oct 2026) — always reconfirm fares and boat times when booking.</div>
+</div>
+
+<script src="assets/logi-data.js"></script>
+<script src="assets/terms.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+function icon(mode){const m=(mode||'').toLowerCase();
+  if(m.includes('flight')||m.includes('fly')||m.includes('air'))return '✈️';
+  if(m.includes('bus')||m.includes('coach'))return '🚌';
+  if(m.includes('ferry')||m.includes('boat')||m.includes('schooner')||m.includes('catamaran'))return '⛴️';
+  if(m.includes('transfer')||m.includes('van')||m.includes('shuttle'))return '🚐';
+  if(m.includes('taxi')||m.includes('uber')||m.includes('car')||m.includes('99'))return '🚕';
+  if(m.includes('metro')||m.includes('train')||m.includes('brt'))return '🚉';
+  if(m.includes('walk'))return '🚶'; if(m.includes('4x4')||m.includes('jeep'))return '🚙';
+  return '📍';}
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+
+function connCard(c){
+  const segs=(c.segments||[]).map(s=>`
+    <div class="seg"><div class="ic">${icon(s.mode)}</div><div class="sb">
+      <div class="route">${esc(s.from||'')}${s.from&&s.to?' → ':''}${esc(s.to||s.mode||'')}</div>
+      <div class="det">${esc(s.detail||'')}</div>
+      <div class="sm">${s.duration?`<span>⏱ ${esc(s.duration)}</span>`:''}${s.cost?`<span>💷 ${esc(s.cost)}</span>`:''}<span>${esc(s.mode||'')}</span></div>
+      ${s.tip?`<div class="tip">${esc(s.tip)}</div>`:''}
+    </div></div>`).join('');
+  const tips=(c.tips||[]).length?`<div class="lst tips"><div class="h">Booking tips</div><ul>${c.tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>`:'';
+  const got=(c.gotchas||[]).length?`<div class="lst got"><div class="h">Watch out</div><ul>${c.gotchas.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>`:'';
+  return `<details class="conn">
+    <summary>
+      <div class="cn"><span>${esc(c.title||c.key)}</span><span class="ar">▾</span></div>
+      <div class="meta">${c.total?`<span class="t">⏱ ${esc(c.total).split('(')[0].trim()}</span>`:''}${c.cost?`<span class="c">💷 ${esc(c.cost).split('(')[0].trim()}</span>`:''}</div>
+    </summary>
+    <div class="cbody">
+      <div class="segs">${segs}</div>
+      ${c.recommend?`<div class="rec">${esc(c.recommend)}</div>`:''}
+      ${c.freq?`<div class="freq">${esc(c.frequency||c.freq||'')}</div>`:(c.frequency?`<div class="freq">${esc(c.frequency)}</div>`:'')}
+      ${tips}${got}
+    </div>
+  </details>`;
+}
+
+$('core').innerHTML=(LOGI.core||[]).map(connCard).join('');
+$('alt').innerHTML=(LOGI.alt||[]).map(connCard).join('');
+
+// overview
+const ov=LOGI.overview||{};
+function arr(a){return Array.isArray(a)?a:[];}
+let oh='';
+if(ov.flights){const f=ov.flights;
+  oh+=`<div class="ov"><h3>✈️ Domestic flights</h3>
+    <div class="chips">${arr(f.airlines).map(a=>`<span>${esc(a)}</span>`).join('')}</div>
+    <div class="row"><b>Baggage:</b> ${esc(f.baggage||'')}</div>
+    <div class="row"><b>Booking:</b> ${esc(f.booking||'')}</div>
+    <div class="row"><b>Fares:</b> ${esc(f.fares||'')}</div>
+    ${arr(f.tips).length?`<ul class="ovtips">${f.tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`:''}</div>`;}
+if(ov.buses){const b=ov.buses;
+  oh+=`<div class="ov"><h3>🚌 Intercity buses</h3>
+    <div class="chips">${arr(b.operators).map(a=>`<span>${esc(a)}</span>`).join('')}</div>
+    <div class="row"><b>Booking:</b> ${esc(b.booking||'')}</div>
+    ${b.comfort?`<div class="row"><b>Comfort:</b> ${esc(b.comfort)}</div>`:''}
+    ${arr(b.tips).length?`<ul class="ovtips">${b.tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`:''}</div>`;}
+if(ov.money){const m=ov.money;
+  oh+=`<div class="ov"><h3>💳 Money & apps</h3>
+    <div class="row"><b>Cash:</b> ${esc(m.cash||'')}</div>
+    <div class="row"><b>Cards:</b> ${esc(m.cards||'')}</div>
+    ${m.tipping?`<div class="row"><b>Tipping:</b> ${esc(m.tipping)}</div>`:''}
+    ${m.transferApps?`<div class="row"><b>Apps:</b> ${esc(m.transferApps)}</div>`:''}</div>`;}
+$('overview').innerHTML=oh;
+
+window.walkTerms&&walkTerms(document.body);
+</script>
+</body>
+</html>
