@@ -60,6 +60,11 @@ h2.sec{font-family:'Playfair Display',serif;font-weight:700;font-size:1.5rem;mar
 .lst.got li::before{content:'⚠';position:absolute;left:0;color:var(--orange);font-size:.7rem}
 .freq{font-size:.76rem;color:var(--text-dim);margin-top:.7rem;line-height:1.45}
 .freq::before{content:'🗓 ';}
+.pricecheck{background:var(--card2);border:1px solid #00d47b33;border-radius:10px;padding:.6rem .75rem;margin-bottom:.8rem}
+.pricecheck .h{font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:.3rem}
+.pricecheck .pcrow{font-size:.8rem;line-height:1.5;margin:.2rem 0;color:#d4ddd4}
+.pricecheck .pcrow b{color:var(--green-bright)}
+.pricecheck .vidchip{margin-top:.55rem}
 
 .ov{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1rem;margin-bottom:.8rem}
 .ov h3{font-size:1rem;margin-bottom:.5rem}
@@ -113,6 +118,7 @@ h2.sec{font-family:'Playfair Display',serif;font-weight:700;font-size:1.5rem;mar
 </div>
 
 <script src="assets/logi-data.js"></script>
+<script src="assets/videos.js"></script>
 <script src="assets/terms.js"></script>
 <script>
 const $=id=>document.getElementById(id);
@@ -143,6 +149,13 @@ function connCard(c){
       <div class="meta">${c.total?`<span class="t">⏱ ${esc(c.total).split('(')[0].trim()}</span>`:''}${c.cost?`<span class="c">💷 ${esc(c.cost).split('(')[0].trim()}</span>`:''}</div>
     </summary>
     <div class="cbody">
+      ${(c.cxPrice||c.vid)?`<div class="pricecheck">
+        <div class="h">✓ Live price check ${c.vid?'· footage':''}</div>
+        ${c.cxPrice?`<div class="pcrow"><b>💰 Price:</b> ${esc(c.cxPrice)}</div>`:''}
+        ${c.cxBook?`<div class="pcrow"><b>🎟️ Book:</b> ${esc(c.cxBook)}</div>`:''}
+        ${c.cxJourney?`<div class="pcrow"><b>🎬 Feels like:</b> ${esc(c.cxJourney)}</div>`:''}
+        ${c.vid?`<span class="vidchip" onclick="event.preventDefault();playVid('${c.vid}')">Watch the journey</span>`:''}
+      </div>`:''}
       <div class="segs">${segs}</div>
       ${c.recommend?`<div class="rec">${esc(c.recommend)}</div>`:''}
       ${c.freq?`<div class="freq">${esc(c.frequency||c.freq||'')}</div>`:(c.frequency?`<div class="freq">${esc(c.frequency)}</div>`:'')}
@@ -164,7 +177,8 @@ if(ov.flights){const f=ov.flights;
     <div class="row"><b>Baggage:</b> ${esc(f.baggage||'')}</div>
     <div class="row"><b>Booking:</b> ${esc(f.booking||'')}</div>
     <div class="row"><b>Fares:</b> ${esc(f.fares||'')}</div>
-    ${arr(f.tips).length?`<ul class="ovtips">${f.tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`:''}</div>`;}
+    ${arr(f.tips).length?`<ul class="ovtips">${f.tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`:''}
+    ${f.vid?`<span class="vidchip" style="margin-top:.5rem" onclick="playVid('${f.vid}')">Watch: GOL vs Azul vs LATAM</span>`:''}</div>`;}
 if(ov.buses){const b=ov.buses;
   oh+=`<div class="ov"><h3>🚌 Intercity buses</h3>
     <div class="chips">${arr(b.operators).map(a=>`<span>${esc(a)}</span>`).join('')}</div>
