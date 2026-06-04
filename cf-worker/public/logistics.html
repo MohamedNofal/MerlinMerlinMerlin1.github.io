@@ -10,7 +10,8 @@
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{--bg:#0a0f0d;--card:#111916;--card2:#162019;--green:#00d47b;--green-dim:#00d47b22;--green-bright:#3affa0;
 --yellow:#ffd43b;--orange:#ff8c42;--blue:#4ecdc4;--pink:#ff6b9d;--text:#e8efe8;--text-dim:#88a08c;--border:#1e2b22}
-body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.5;overflow-x:hidden;padding-bottom:3rem}
+html{font-size:17.5px;-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.62;overflow-x:hidden;padding-bottom:3rem;font-weight:400;letter-spacing:.1px}
 .wrap{max-width:600px;margin:0 auto;padding:0 1rem}
 
 .hero{text-align:center;padding:2rem 1rem .5rem}
@@ -31,22 +32,22 @@ h2.sec{font-family:'Playfair Display',serif;font-weight:700;font-size:1.3rem;mar
 .conn>summary{list-style:none;cursor:pointer;padding:.85rem .9rem;display:flex;flex-direction:column;gap:.5rem}
 .conn>summary::-webkit-details-marker{display:none}
 .ch{display:flex;align-items:center;justify-content:space-between;gap:.5rem}
-.ch .cn{font-weight:700;font-size:1rem;line-height:1.15}
+.ch .cn{font-weight:700;font-size:1.05rem;line-height:1.2}
 .ch .ar{color:var(--text-dim);font-size:.7rem;transition:.2s;flex:0 0 auto}
 .conn[open] .ch .ar{transform:rotate(180deg)}
 .strip{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
-.modes{font-size:.95rem;letter-spacing:.15rem}
-.chip{font-family:'JetBrains Mono',monospace;font-size:.66rem;padding:.22rem .5rem;border-radius:7px;background:var(--card2);color:var(--text-dim);white-space:nowrap}
+.modes{font-size:1.05rem;letter-spacing:.18rem}
+.chip{font-family:'JetBrains Mono',monospace;font-size:.72rem;padding:.26rem .55rem;border-radius:7px;background:var(--card2);color:var(--text-dim);white-space:nowrap}
 .chip.t{color:var(--blue)}.chip.c{color:var(--green-bright)}.chip.v{color:#ff8080;background:#ff6b6b18}
 
 .cbody{padding:.2rem .9rem 1rem;border-top:1px solid var(--border)}
-.feels{font-size:.86rem;color:#cdd9ce;font-style:italic;margin:.8rem 0;line-height:1.5}
+.feels{font-size:.92rem;color:#d4ddd4;font-style:italic;margin:.85rem 0;line-height:1.55}
 .segline{display:flex;flex-direction:column;gap:.3rem;margin:.7rem 0}
-.segrow{display:flex;align-items:center;gap:.55rem;font-size:.82rem}
+.segrow{display:flex;align-items:center;gap:.55rem;font-size:.88rem}
 .segrow .si{flex:0 0 auto;width:1.3rem;text-align:center;font-size:1rem}
 .segrow .sl{flex:1;color:var(--text)}
 .segrow .sd{font-family:'JetBrains Mono',monospace;font-size:.64rem;color:var(--text-dim);white-space:nowrap}
-.rec{font-size:.83rem;line-height:1.45;margin:.6rem 0;color:#d4ddd4;background:var(--green-dim);border-radius:9px;padding:.55rem .7rem}
+.rec{font-size:.88rem;line-height:1.5;margin:.6rem 0;color:#d4ddd4;background:var(--green-dim);border-radius:9px;padding:.6rem .75rem}
 .rec b{color:var(--green-bright)}
 .actrow{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.6rem}
 .linkbtn{font-size:.74rem;font-weight:600;color:var(--blue);background:#4ecdc414;border:1px solid #4ecdc433;border-radius:99px;padding:.35rem .75rem;cursor:pointer}
@@ -80,6 +81,26 @@ details.more[open]>summary::before{content:'▾ '}
 .ovb .row b{color:var(--green-bright)}
 .chips2{display:flex;gap:.35rem;flex-wrap:wrap;margin:.6rem 0}
 .chips2 span{font-family:'JetBrains Mono',monospace;font-size:.62rem;background:var(--card2);border:1px solid var(--border);border-radius:99px;padding:.2rem .5rem;color:var(--text-dim)}
+/* nested sub-toggles in overview */
+.sub{border-top:1px solid var(--border)}
+.sub>summary{list-style:none;cursor:pointer;font-size:.85rem;font-weight:600;padding:.65rem 0;display:flex;align-items:center;gap:.4rem}
+.sub>summary::-webkit-details-marker{display:none}
+.sub>summary::before{content:'＋';color:var(--green);font-size:.8rem;width:.9rem}
+.sub[open]>summary::before{content:'－'}
+.subb{padding:0 0 .7rem .9rem}
+.kvline{font-size:.81rem;color:#d4ddd4;line-height:1.5;margin-bottom:.5rem}
+ul.mini{list-style:none;display:flex;flex-direction:column;gap:.35rem;margin:.2rem 0}
+ul.mini li{font-size:.85rem;line-height:1.5;padding-left:.95rem;position:relative;color:#cdd9ce}
+ul.mini li::before{content:'›';position:absolute;left:0;color:var(--green)}
+ul.mini li b{color:var(--green-bright)}
+.tiers{display:flex;flex-direction:column;gap:.4rem;margin:.6rem 0}
+.tier{background:var(--card2);border:1px solid var(--border);border-radius:9px;padding:.45rem .6rem;font-size:.78rem;line-height:1.4}
+.tier b{color:var(--green-bright);display:block;font-size:.72rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.5px}
+.tip{font-size:.78rem;color:#d8c98a;background:#ffd43b12;border-left:2px solid var(--yellow);border-radius:7px;padding:.45rem .6rem;margin-top:.5rem;line-height:1.45}
+.ftable{display:flex;flex-direction:column;gap:.3rem}
+.frow{display:flex;justify-content:space-between;align-items:baseline;gap:.6rem;font-size:.87rem;padding:.4rem 0;border-bottom:1px dashed var(--border)}
+.frow:last-child{border-bottom:none}
+.frow .fp{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--green-bright);white-space:nowrap}
 
 .nav{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin:2.2rem 0 1rem}
 .nav a{color:var(--text-dim);text-decoration:none;border:1px solid var(--border);border-radius:99px;padding:.4rem .9rem;font-size:.8rem}
@@ -190,12 +211,43 @@ $('alt').innerHTML=(LOGI.alt||[]).map(connCard).join('');
 const ov=LOGI.overview||{};const arr=a=>Array.isArray(a)?a:[];
 let oh='';
 if(ov.flights){const f=ov.flights;
+  const F={
+    carryOn:"Every fare includes 1 carry-on (~10kg) + 1 personal item. Azul allows 2 cabin bags.",
+    checked:[
+      "Cheapest fares are <b>carry-on only</b> — GOL ‘Light’, LATAM ‘Basic’, Azul ‘Azul’.",
+      "First 23kg checked bag: <b>~R$60–80</b> added online in advance vs <b>R$80–120</b> at the airport.",
+      "Azul extra pieces ~R$30 online / R$50 airport. Excess over 23kg ~R$25–30/kg."],
+    tiers:[
+      {t:"Carry-on fares",d:"GOL Light · LATAM Basic · Azul — cabin bag only, no checked bag"},
+      {t:"Mid-tier fares",d:"GOL Plus · LATAM Light/Plus · Mais Azul — 1 free 23kg bag + seat choice"}],
+    groupTip:"For 5 men: either go carry-on only, or buy the fare that bundles the bag — adding bags à la carte for 5 gets expensive fast.",
+    booking:[
+      "Book <b>6–8 weeks out</b> for best prices (sweet spot 2–6 months); last-minute is dear.",
+      "Book on the airline apps — <b>Voe Gol, LATAM, Voe Azul</b> — they often beat aggregators and offer bundled fares.",
+      "Compare on Google Flights / Skyscanner / Kayak first, then book on the app.",
+      "Foreign Visa/Mastercard work — <b>no CPF needed</b>, just your passport.",
+      "Book all 5 together so you’re not split across fare buckets."],
+    fares:[
+      {r:"Rio ↔ São Paulo",p:"R$150–350 · £23–54"},
+      {r:"SP ↔ Salvador / Recife",p:"R$300–600 · £46–92"},
+      {r:"To Foz do Iguaçu",p:"R$250–550 · £38–85"},
+      {r:"To Manaus (long-haul)",p:"R$450–900 · £69–138"}]};
   oh+=`<details class="ov"><summary>✈️ Domestic flights<span class="ar">▼</span></summary><div class="ovb">
-    <div class="chips2">${arr(f.airlines).map(a=>`<span>${esc(a)}</span>`).join('')}</div>
-    <div class="row"><b>Baggage:</b> ${esc(f.baggage||'')}</div>
-    <div class="row"><b>Booking:</b> ${esc(f.booking||'')}</div>
-    <div class="row"><b>Fares:</b> ${esc(f.fares||'')}</div>
-    ${f.vid?`<span class="vidchip" style="margin-top:.5rem" onclick="playVid('${f.vid}')">GOL vs Azul vs LATAM</span>`:''}</div></details>`;}
+    <div class="chips2">${(arr(f.airlines).map(a=>esc(a.split(/\s[-–]\s/)[0].trim())).filter(Boolean).join('')?arr(f.airlines).map(a=>`<span>${esc(a.split(/\s[-–]\s/)[0].trim())}</span>`).join(''):'<span>GOL</span><span>LATAM</span><span>Azul</span>')}</div>
+    <details class="sub"><summary>🧳 Baggage &amp; fare classes</summary><div class="subb">
+      <div class="kvline">${F.carryOn}</div>
+      <ul class="mini">${F.checked.map(x=>`<li>${x}</li>`).join('')}</ul>
+      <div class="tiers">${F.tiers.map(t=>`<div class="tier"><b>${t.t}</b>${esc(t.d)}</div>`).join('')}</div>
+      <div class="tip">${esc(F.groupTip)}</div>
+    </div></details>
+    <details class="sub"><summary>🗓 Booking &amp; payment</summary><div class="subb">
+      <ul class="mini">${F.booking.map(x=>`<li>${x}</li>`).join('')}</ul>
+    </div></details>
+    <details class="sub"><summary>💷 Typical fares (one-way economy)</summary><div class="subb">
+      <div class="ftable">${F.fares.map(x=>`<div class="frow"><span>${esc(x.r)}</span><span class="fp">${esc(x.p)}</span></div>`).join('')}</div>
+    </div></details>
+    ${f.vid?`<span class="vidchip" style="margin-top:.7rem" onclick="playVid('${f.vid}')">Watch: GOL vs Azul vs LATAM</span>`:''}
+  </div></details>`;}
 if(ov.buses){const b=ov.buses;
   oh+=`<details class="ov"><summary>🚌 Intercity buses<span class="ar">▼</span></summary><div class="ovb">
     <div class="chips2">${arr(b.operators).map(a=>`<span>${esc(a)}</span>`).join('')}</div>
